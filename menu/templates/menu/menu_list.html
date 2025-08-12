@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{%block title%}MENU{% endblock %}
+
+{%block content%}
+    {% for category in categories %}
+        <h2>{{ category.name }}</h2>
+        {% if category.description %}
+            <p>{{ category.description }}</p>
+        {% endif %}
+        <ul>
+            {% for item in category.items.all %}
+                <li>
+                    <strong>{{ item.name }}</strong> - {{ item.price }}€
+                    {% if item.description %}<br>{{ item.description }}{% endif %}
+                </li>
+            {% empty %}
+                <li>No items in this category yet.</li>
+            {% endfor %}
+        </ul>
+    {% empty %}
+        <p>No menu categories found.</p>
+    {% endfor %}
+{%endblock%}
