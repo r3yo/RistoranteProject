@@ -18,4 +18,5 @@
     {% empty %}
         <p>No menu categories found.</p>
     {% endfor %}
+    <input type="button" value="Add new dish" onclick="window.location.href='{% url 'menu:create-dish' %}'">
 {%endblock%}

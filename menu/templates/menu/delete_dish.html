@@ -5,6 +5,6 @@
     <p>Are you sure you want to proceed? This action cannot be undone.</p>
     <form method="POST">{%csrf_token%}
         <input type="submit" value="Delete">
-        <button type="button" onclick="window.location.href='{%url 'home'%}'">Cancel</button>
+        <input type="button" onclick="window.location.href='{% url 'menu:dish-detail' dish.pk %}'" value="Cancel">
     </form>
 {%endblock%}
