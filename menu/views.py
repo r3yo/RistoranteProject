@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from django.urls import *
 from django.views.generic.list import ListView
+from django.views.generic.edit import *
 from .models import *
+from .forms import *
 
 # Create your views here.
 class MenuView(ListView):
@@ -28,3 +31,14 @@ class MenuView(ListView):
             dish_qs = dish_qs.filter(**filters)
         
         return Category.objects.filter(dishes__in=dish_qs).distinct()
+
+class DishCreateView(CreateView):
+    model = Dish
+    form_class = DishForm
+    template_name = "menu/create_dish.html"
+    success_url = reverse_lazy("menu:menu-list")
+
+class DishDetailView(DeleteView):
+    model = Dish
+    template_name = "menu/dish_detail.html"
+    context_object_name = "dish"
