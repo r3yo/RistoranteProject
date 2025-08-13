@@ -4,15 +4,12 @@
 
 {%block content%}
     {% for category in categories %}
-        <h2>{{ category.name }}</h2>
-        {% if category.description %}
-            <p>{{ category.description }}</p>
-        {% endif %}
+        <h2>{{ category }}</h2>
         <ul>
-            {% for item in category.dishes.all %}
+            {% for dish in category.dishes.all %}
                 <li>
-                    <strong>{{ item.name }}</strong> - {{ item.price }}€
-                    {% if item.description %}<br>{{ item.description }}{% endif %}
+                    <a href="{% url 'menu:dish-detail' dish.pk %}"><strong>{{ dish.name }}</strong> - {{ dish.price }}€
+                    {% if dish.description %}<br>{{ dish.description }}{% endif %}</a>
                 </li>
             {% empty %}
                 <li>No items in this category yet.</li>

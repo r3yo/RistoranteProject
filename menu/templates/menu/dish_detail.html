@@ -4,11 +4,12 @@
     <h1>{{dish.name}}</h1>
     <p>Category: {{dish.category}}</p>
     <p>Price: {{dish.price}} Euro</p>
-    <p>Status: </p>
-    {%if dish.available%}
-        <p>Available</p>
-    {%else%}
-        <p>Sold out</p>
-    {%endif%}
-    <a href="{%url "menu:menu-list" %}">Back to menu</a>
+    <p>Status: 
+        {%if dish.available%}
+            Available
+        {%else%}
+            Sold out
+        {%endif%}
+    </p>
+    <a href="{% url "menu:menu-list" %}">Back to menu</a>
 {%endblock%}

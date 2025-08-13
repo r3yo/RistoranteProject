@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+
+{%block content%}
+    <h2>You are trying to delete dish: {{dish.name}}.</h2>
+    <p>Are you sure you want to proceed? This action cannot be undone.</p>
+    <form method="POST">{%csrf_token%}
+        <input type="submit" value="Delete">
+        <button type="button" onclick="window.location.href='{%url 'home'%}'">Cancel</button>
+    </form>
+{%endblock%}
