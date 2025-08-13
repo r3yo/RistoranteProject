@@ -22,7 +22,7 @@ class MenuView(ListView):
             if value is not None:
                 if value in ["0", "1"]:
                     value = value == "1"
-                filter[lookup] = value
+                filters[lookup] = value
         
         if filters:
             dish_qs = dish_qs.filter(**filters)
