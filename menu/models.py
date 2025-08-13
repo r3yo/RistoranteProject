@@ -8,7 +8,7 @@ class Category(models.Model):
 
 
 class Dish(models.Model):
-    category = models.ForeignKey(Category, related_name="items", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name="dishes", on_delete=models.CASCADE)
     name = models.CharField(max_length=150)
     ingredients = models.CharField(blank=False)
     description = models.CharField(default="No description.")

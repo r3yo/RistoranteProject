@@ -9,7 +9,7 @@
             <p>{{ category.description }}</p>
         {% endif %}
         <ul>
-            {% for item in category.items.all %}
+            {% for item in category.dishes.all %}
                 <li>
                     <strong>{{ item.name }}</strong> - {{ item.price }}€
                     {% if item.description %}<br>{{ item.description }}{% endif %}
