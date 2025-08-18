@@ -23,7 +23,7 @@ class Dish(models.Model):
     description = models.CharField(default="No description.")
     price = models.DecimalField(max_digits=6, decimal_places=2)
     available = models.BooleanField(default=True)
-    img = models.ImageField(upload_to = 'dishes/', blank = True, null = True)
+    img = models.ImageField(upload_to = 'dishes/', blank = True)
     class Meta:
         verbose_name_plural = "Dishes"
     def __str__(self):
