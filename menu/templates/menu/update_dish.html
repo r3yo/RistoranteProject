@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{%block content%}
+    <h1>Updating dish: {{dish.name}}</h1>
+    <form method="POST">{%csrf_token%}
+        {{form.as_p}}
+        <input type = "submit" value = "Update">
+        <input type = "button" onclick = "window.location.href='{% url 'menu:dish-detail' dish.pk %}'" value = "Cancel">
+{%endblock%}

@@ -13,4 +13,5 @@
     </p>
     <a href="{% url "menu:menu-list" %}">Back to menu</a>
     <input type="button" onclick="window.location.href='{% url 'menu:delete-dish' dish.pk %}'" value="Delete">
+    <input type="button" onclick="window.location.href='{% url 'menu:update-dish' dish.pk %}'" value="Update">
 {%endblock%}
