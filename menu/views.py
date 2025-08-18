@@ -17,19 +17,18 @@ class DishesView(ListView):
     model = Dish
     template_name = "menu/dishes_list.html"
     context_object_name = "dishes"
-#    def get_queryset(self):
-#        self.category = get_object_or_404(Category, slug = self.kwargs["slug"])
-#        return Dish.objects.filter(category = self.category)
-#    def get_context_data(self, **kwargs):
-#        context = super().get_context_data(**kwargs)
-#        context["category"] = self.category
-#        return context
 
 class DishCreateView(CreateView):
     model = Dish
     form_class = DishForm
     template_name = "menu/create_dish.html"
     success_url = reverse_lazy("menu:menu-list")
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if 'img' in self.request.FILES:
+            self.object.image = self.request.FILES['img']
+            self.object.save()
+        return response
 
 class DishDetailView(DetailView):
     template_name = "menu/dish_detail.html"
@@ -57,6 +56,9 @@ def search(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             cleaned = form.cleaned_data.copy()
+            for k, v in cleaned.items():
+                if hasattr(v, "pk"):
+                    cleaned[k] = str(v.pk)
             if 'min_price' in cleaned and cleaned["min_price"] != None:
                 cleaned['min_price'] = str(cleaned["min_price"])
             if 'max_price' in cleaned and cleaned["max_price"] != None:
@@ -74,13 +76,12 @@ class DishSearchView(DishesView):
         filter_data = self.request.session.get('field_data', {})
         params = {
             "name" : "name__icontains",
-            "category" : "category__iexact",
+            "category" : "category",
             "min_price" : "price__gte",
             "max_price" : "price__lte",
             "available" : "available",
         }
         filters = {}
-        print(filter_data)
         for k, v in params.items():
             if k in filter_data and filter_data[k]:
                 if k == 'min_price' or k == 'max_price':
@@ -88,30 +89,3 @@ class DishSearchView(DishesView):
                 filters[v] = filter_data[k]
         query_set = query_set.filter(**filters)
         return query_set
-
-    #    results = Dish.objects.all()
-    #    filters = {
-    #        "price__gte" : self.request.resolver_match.kwargs["min_price"],
-    #        "price__lte" : self.request.resolver_match.kwargs["max_price"],
-    #        "available" : self.request.resolver_match.kwargs["available"],
-    #    }
-    #    if self.request.resolver_match.kwargs["name"] != "Any":
-    #        filters["name__icontains"] = self.request.resolver_match.kwargs["name"]
-
-    #    if self.request.resolver_match.kwargs["category"] != "Any":
-    #        filters["category"] = self.request.resolver_match.kwargs["category"]
-    #    params = {
-    #        "name" : "name__icontains",
-    #        "category" : "category__iexact",
-    #        "min_price" : "price__gte",
-    #        "max_price" : "price__lte",
-    #        "available" : "available",
-    #    }
-    #    filters = {}
-    #    for k, v in params.items():
-    #        if self.request.resolver_match.kwargs
-
-        
-    #    results = results.filter(**filters)
-        
-    #    return results

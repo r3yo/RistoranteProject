@@ -11,6 +11,9 @@
                     <a href="{% url 'menu:dish-detail' dish.pk %}"><strong>{{ dish.name }}</strong> </a> - {{ dish.price }}€
                     {% if dish.description %}<br>{{ dish.description }}{% endif %}
                 </li>
+                {% if dish.img %}
+                    <img src = "{{ dish.img.url }}" alt = "{{ dish.name }}" style="max-width:300px;">
+                {% endif %}
             {% empty %}
                 <li>No items in this category yet.</li>
             {% endfor %}

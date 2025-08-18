@@ -4,7 +4,7 @@ from .models import *
 class DishForm(forms.ModelForm):
     class Meta:
         model = Dish
-        fields = ["category", "name", "price", "available"]
+        fields = ["category", "name", "price", "available", "img"]
 
 class SearchForm(forms.Form):
     name = forms.CharField(label="Name:", required = False)
