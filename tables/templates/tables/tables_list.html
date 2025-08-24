@@ -1,0 +1,17 @@
+<h2>All Tables</h2>
+<ul>
+  {% for table in tables %}
+    <li>
+      <strong>{{ table }}</strong>
+      {% if table.active_reservations %}
+        <ul>
+          {% for res in table.active_reservations %}
+            <li>{{ res.date }} at {{ res.time }} for {{ res.guests }} people</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No upcoming reservations</p>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

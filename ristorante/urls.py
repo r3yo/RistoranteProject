@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^$|^\/$|^home\/$', home, name="home"),
     path('menu/', include('menu.urls')),
+    path('tables/', include('tables.urls')),
 ]
 
 if settings.DEBUG:
