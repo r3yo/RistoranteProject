@@ -8,6 +8,9 @@ import string
 # Create your models here.
 
 class Table(models.Model):
+
+    HOURS_CHOICES = [(h, f"{h}:00 - {h+1}:00") for h in list(range(10, 15)) + list(range(19, 23))]
+    
     number = models.IntegerField(unique = True)
     seats = models.IntegerField()
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
