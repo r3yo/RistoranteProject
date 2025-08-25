@@ -115,13 +115,12 @@ class AvailabilitySearchView(TableView):
         for table in context["tables"]:
             reserved = table.reservations.filter(date = date)
             available_hours = [(h, label) for h, label in table.HOURS_CHOICES]
-            occupied_hours = set()
 
             for r in reserved:
                 start = r.start_hour.hour
                 end = r.end_hour.hour
-                occupied_hours.update(range(start, end)) # Occupied hours for reservation
-                available_hours = [(h, label) for h, label in table.HOURS_CHOICES if h not in occupied_hours]
+                occupied_hours = range(start, end) # Occupied hours for reservation
+                available_hours = [(h, label) for h, label in available_hours if h not in occupied_hours]
 
             if requested_hours:
                 available_hours = [(h, label) for h, label in available_hours if h in requested_hours_int]
