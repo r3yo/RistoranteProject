@@ -83,6 +83,7 @@ class DishSearchView(DishesView):
             "available" : "available",
         }
         filters = {}
+        # if available remains unchecked it displays every item, regardless of its availability
         for k, v in params.items():
             if k in filter_data and filter_data[k]:
                 if k == 'min_price' or k == 'max_price':
