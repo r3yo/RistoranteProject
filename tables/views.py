@@ -3,7 +3,7 @@ from django.views.generic import *
 from django.shortcuts import *
 from django.urls import *
 from datetime import *
-
+from django.contrib.auth.mixins import *
 from .models import *
 from .forms import *
 # Create your views here.
@@ -25,49 +25,18 @@ class TableView(ListView):
         
         return context
 
-class ReservationCreateView(FormView):
+class ReservationCreateView(LoginRequiredMixin, CreateView):
+    model = Reservation
     form_class = CreateReservationForm
     template_name = 'tables/make_reservation.html'
     success_url = reverse_lazy('tables:tables-list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user      # pass user into the form constructor
+        return kwargs
+
     def form_valid(self, form):
-        date = form.cleaned_data["date"]
-        selected_hours = sorted([int(h) for h in form.cleaned_data['time']])
-        guests = form.cleaned_data["guests"]
-        notes = form.cleaned_data["notes"]
-        start_hour = selected_hours[0]
-        end_hour = selected_hours[-1] + 1  # last hour + 1
-        start_time_obj = time(hour = selected_hours[0])
-        end_time_obj = time(hour = selected_hours[-1] + 1)
-
-        # Automatically assign a table
-        tables = Table.objects.filter(seats = guests)
-        assigned_table = None
-        for table in tables:
-            conflict = Reservation.objects.filter(
-                table=table,
-                date=date,
-                start_hour__lt = end_time_obj,
-                end_hour__gt = start_time_obj
-            ).exists()
-            if not conflict:
-                assigned_table = table
-                break
-
-        if not assigned_table:
-            form.add_error('time', f"No table available from {start_hour}:00 to {end_hour}:00")
-            return self.form_invalid(form)
-
-        # Save reservation
-        Reservation.objects.create(
-            table = assigned_table,
-            date = date,
-            start_hour = start_time_obj,
-            end_hour = end_time_obj,
-            notes = notes,
-            guests = guests
-        )
-
         return super().form_valid(form)
 
 def cancel_reservation(request, pk):

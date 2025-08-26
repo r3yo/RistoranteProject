@@ -63,6 +63,7 @@ def search(request):
                 cleaned['min_price'] = str(cleaned["min_price"])
             if 'max_price' in cleaned and cleaned["max_price"] != None:
                 cleaned['max_price'] = str(cleaned["max_price"])
+            cleaned['ingredients'] = [ing.slug for ing in cleaned['ingredients']]
             request.session['field_data'] = cleaned
             return redirect('menu:search-results')
     else:
@@ -88,4 +89,8 @@ class DishSearchView(DishesView):
                     filter_data[k] = Decimal(filter_data[k])
                 filters[v] = filter_data[k]
         query_set = query_set.filter(**filters)
+        ingredients = filter_data['ingredients']
+        if ingredients:
+            for ing in ingredients:
+                query_set = query_set.filter(ingredients = ing)
         return query_set

@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'menu.apps.MenuConfig',
     'tables.apps.TablesConfig',
 ]
@@ -128,8 +130,18 @@ STATICFILES_DIR = [os.path.join(BASE_DIR, "static")]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Image files upload
+# Image files upload
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+# Login redirect
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+
+# Crispy template pack
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"

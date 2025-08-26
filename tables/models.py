@@ -2,6 +2,7 @@ from django.db import models
 from datetime import *
 from django.utils.timezone import *
 from django.db.models import Q
+from django.contrib.auth.models import User
 import random
 import string
 
@@ -28,11 +29,12 @@ class Table(models.Model):
 
 class Reservation(models.Model):
 
+    user = models.ForeignKey(User, on_delete = models.PROTECT, blank = True, related_name = "reservations")
     table = models.ForeignKey(Table, on_delete = models.CASCADE, related_name = "reservations")
     date = models.DateField()
     start_hour = models.TimeField()
     end_hour = models.TimeField()
-    notes = models.TextField(blank = True)
+    notes = models.CharField(blank = True)
     guests = models.IntegerField()
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
 
@@ -44,7 +46,7 @@ class Reservation(models.Model):
             ),
         ]
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  
         if not self.slug:
             self.slug = self.generate_unique_slug()
         super().save(*args, **kwargs)

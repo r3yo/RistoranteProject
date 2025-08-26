@@ -4,6 +4,11 @@
     <h1>{{dish.name}}</h1>
     <p>Category: {{dish.category}}</p>
     <p>Price: {{dish.price}} Euro</p>
+    <p>Ingredients:
+        {% for ingredient in dish.ingredients.all %}
+            <p>{{ ingredient }}</p>
+        {% endfor %}
+    </p>
     <p>Status: 
         {%if dish.available%}
             Available
