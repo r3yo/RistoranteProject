@@ -11,7 +11,7 @@
             <li>
                 {{ reservation.date }} 
                 ({{ reservation.start_hour }} - {{ reservation.end_hour }}) - 
-                {{ reservation.guests }} guests - Reserved by {{ reservation.user.username }}
+                {{ reservation.guests }} guests - Reserved by {{ reservation.user.first_name }} {{reservation.user.last_name}}
             </li>
         {% endfor %}
     </ul>
