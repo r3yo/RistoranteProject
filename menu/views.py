@@ -5,6 +5,7 @@ from django.shortcuts import *
 from django.views.generic.list import ListView
 from django.views.generic.edit import *
 from django.views.generic.detail import DetailView
+from braces.views import GroupRequiredMixin
 from .models import *
 from .forms import *
 # Create your views here.
@@ -18,7 +19,8 @@ class DishesView(ListView):
     template_name = "menu/dishes_list.html"
     context_object_name = "dishes"
 
-class DishCreateView(CreateView):
+class DishCreateView(GroupRequiredMixin, CreateView):
+    group_required = ["Managers"]
     model = Dish
     form_class = DishForm
     template_name = "menu/create_dish.html"
@@ -36,14 +38,16 @@ class DishDetailView(DetailView):
     def get_object(self, queryset = None):
         return get_object_or_404(Dish, pk=self.kwargs.get("pk"))
 
-class DishDeleteView(DeleteView):
+class DishDeleteView(GroupRequiredMixin, DeleteView):
+    group_required = ["Managers"]
     template_name = "menu/delete_dish.html"
     context_object_name = "dish"
     success_url = reverse_lazy("menu:menu-list")
     def get_object(self, queryset = None):
         return get_object_or_404(Dish, pk=self.kwargs.get("pk"))
     
-class DishUpdateView(UpdateView):
+class DishUpdateView(GroupRequiredMixin, UpdateView):
+    group_required = ["Managers"]
     template_name = "menu/update_dish.html"
     context_object_name = "dish"
     form_class = DishForm
