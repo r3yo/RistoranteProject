@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ table }}</h1>
+<p>Seats: {{ table.seats }}</p>
+
+<h2>Reservations</h2>
+{% if reservations %}
+    <ul>
+        {% for reservation in reservations %}
+            <li>
+                {{ reservation.date }} 
+                ({{ reservation.start_hour }} - {{ reservation.end_hour }}) - 
+                {{ reservation.guests }} guests - Reserved by {{ reservation.user.username }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No reservations for this table.</p>
+{% endif %}
+
+{% if user.is_staff or "Managers" in user.groups.all.0.name %}
+    <a href="{%url 'tables:update-table'%}">Update table</a>
+    <a href="{%url 'tables:delete-table'%}">Delete table</a>
+{% endif %}
+
+{% endblock %}

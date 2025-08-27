@@ -1,5 +1,4 @@
 from decimal import Decimal
-from django.shortcuts import render
 from django.urls import *
 from django.shortcuts import *
 from django.views.generic.list import ListView
@@ -14,46 +13,32 @@ class MenuView(ListView):
     template_name = "menu/menu_list.html"
     context_object_name = "categories"
 
-class DishesView(ListView):
+class DishBaseView:
     model = Dish
+    form_class = DishForm
+    context_object_name = "dish"
+    success_url = reverse_lazy('menu:menu-list')
+    def get_object(self, queryset = None):
+        return get_object_or_404(Dish, pk = self.kwargs.get("pk"))
+
+class DishesView(DishBaseView, ListView):
     template_name = "menu/dishes_list.html"
     context_object_name = "dishes"
 
-class DishCreateView(GroupRequiredMixin, CreateView):
+class DishCreateView(GroupRequiredMixin, DishBaseView, CreateView):
     group_required = ["Managers"]
-    model = Dish
-    form_class = DishForm
     template_name = "menu/create_dish.html"
-    success_url = reverse_lazy("menu:menu-list")
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if 'img' in self.request.FILES:
-            self.object.image = self.request.FILES['img']
-            self.object.save()
-        return response
 
-class DishDetailView(DetailView):
+class DishDetailView(DishBaseView, DetailView):
     template_name = "menu/dish_detail.html"
-    context_object_name = "dish"
-    def get_object(self, queryset = None):
-        return get_object_or_404(Dish, pk=self.kwargs.get("pk"))
 
-class DishDeleteView(GroupRequiredMixin, DeleteView):
+class DishDeleteView(GroupRequiredMixin, DishBaseView, DeleteView):
     group_required = ["Managers"]
     template_name = "menu/delete_dish.html"
-    context_object_name = "dish"
-    success_url = reverse_lazy("menu:menu-list")
-    def get_object(self, queryset = None):
-        return get_object_or_404(Dish, pk=self.kwargs.get("pk"))
     
-class DishUpdateView(GroupRequiredMixin, UpdateView):
+class DishUpdateView(GroupRequiredMixin, DishBaseView, UpdateView):
     group_required = ["Managers"]
     template_name = "menu/update_dish.html"
-    context_object_name = "dish"
-    form_class = DishForm
-    success_url = reverse_lazy("menu:menu-list")
-    def get_object(self, queryset = None):
-        return get_object_or_404(Dish, pk=self.kwargs.get("pk"))
     
 def search(request):
     if request.method == "POST":

@@ -1,17 +1,28 @@
-<h2>All Tables</h2>
-<ul>
-  {% for table in tables %}
-    <li>
-      <strong>{{ table }}</strong>
-      {% if table.active_reservations %}
-        <ul>
-          {% for res in table.active_reservations %}
-            <li>{{ res.date }} at {{ res.time }} for {{ res.guests }} people</li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>No upcoming reservations</p>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>All Tables</h1>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Table Number</th>
+            <th>Seats</th>
+            <th>Reservations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for table in tables %}
+        <tr>
+            <td>{{ table.number }}</td>
+            <td>{{ table.seats }}</td>
+            <td>{{ table.reservations.count }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No tables found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

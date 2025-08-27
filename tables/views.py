@@ -4,12 +4,33 @@ from django.shortcuts import *
 from django.urls import *
 from datetime import *
 from django.contrib.auth.mixins import *
+from django.contrib.auth.decorators import *
+from braces.views import GroupRequiredMixin
 from .models import *
 from .forms import *
 # Create your views here.
 
-class TableView(ListView):
+class TableBaseView(GroupRequiredMixin):
+    group_required = ["Managers"]
     model = Table
+    form_class = TableForm
+    context_object_name = "table"
+    success_url = reverse_lazy('tables:tables-list')
+
+    def get_object(self, queryset = None):
+        return get_object_or_404(Table, pk = self.kwargs.get("pk"))
+    
+
+class CreateTableView(TableBaseView, CreateView):
+    template_name = "tables/create_table.html"
+
+class UpdateTableView(TableBaseView, UpdateView):
+    template_name = "tables/update_table.html"
+
+class DeleteTableView(TableBaseView, DeleteView):
+    template_name = "tables/delete_table.html"
+
+class TableView(TableBaseView, ListView):
     template_name = "tables/tables_list.html"
     context_object_name = "tables"
 
@@ -25,6 +46,9 @@ class TableView(ListView):
         
         return context
 
+class TableDetailView(TableBaseView, DetailView):
+    template_name = "tables/table_detail.html"
+
 class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = CreateReservationForm
@@ -39,6 +63,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         return super().form_valid(form)
 
+@login_required
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
     reservation.delete()

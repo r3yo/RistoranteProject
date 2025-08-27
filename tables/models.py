@@ -38,14 +38,6 @@ class Reservation(models.Model):
     guests = models.IntegerField()
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check = Q(guests__gt = 0),
-                name = 'guests_positive'
-            ),
-        ]
-
     def save(self, *args, **kwargs):  
         if not self.slug:
             self.slug = self.generate_unique_slug()
@@ -54,7 +46,7 @@ class Reservation(models.Model):
     def generate_unique_slug(self):
         while True:
             slug = f"R-{random.choice(string.ascii_uppercase)}{random.randint(1000,9999)}"
-            if not Reservation.objects.filter(slug=slug).exists():
+            if not Reservation.objects.filter(slug = slug).exists():
                 return slug
 
     def __str__(self):

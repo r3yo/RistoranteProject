@@ -7,5 +7,9 @@
     <p>
         <a href="{%url 'menu:menu-list'%}">Look at the menu!</a>
         <a href="{%url 'tables:make-reservation'%}">Make a reservation!</a>
+        {% if user.is_staff or "Manager" in user.groups.all.0.name %}
+            <a href="{%url 'tables:create-table'%}">Add new table</a>
+            <a href="{%url 'tables:tables-list'%}">Look at the list of tables, and the reservations for each of them</a>
+        {% endif %}
     </p>
 {%endblock%}
