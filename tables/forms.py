@@ -15,7 +15,7 @@ class TableForm(forms.ModelForm):
         seats = self.cleaned_data['seats']
         table = self.instance  # the Table being updated
         # flat = True returns a flat list of values instead of tuples
-        max_reserved = table.reservation_set.order_by('-people').values_list('people', flat=True).first() or 0 # max_reserved is an integer, not a tuple
+        max_reserved = table.reservations.filter(date__gte=now().date()).order_by('-guests').values_list('guests', flat=True).first() or 0 # max_reserved is an integer, not a tuple
         if seats < max_reserved:
             raise forms.ValidationError(
                 f"Cannot reduce seats below {max_reserved} because of existing reservations."

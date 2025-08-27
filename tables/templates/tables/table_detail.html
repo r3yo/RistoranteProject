@@ -20,8 +20,8 @@
 {% endif %}
 
 {% if user.is_staff or "Managers" in user.groups.all.0.name %}
-    <a href="{%url 'tables:update-table'%}">Update table</a>
-    <a href="{%url 'tables:delete-table'%}">Delete table</a>
+    <a href="{%url 'tables:update-table' table.pk%}">Update table</a>
+    <a href="{%url 'tables:delete-table' table.pk%}">Delete table</a>
 {% endif %}
 
 {% endblock %}

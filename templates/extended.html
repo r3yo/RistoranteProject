@@ -8,8 +8,13 @@
         <a href="{%url 'menu:menu-list'%}">Look at the menu!</a>
         <a href="{%url 'tables:make-reservation'%}">Make a reservation!</a>
         {% if user.is_staff or "Manager" in user.groups.all.0.name %}
-            <a href="{%url 'tables:create-table'%}">Add new table</a>
+            <a href="{%url 'tables:add-table'%}">Add new table</a>
             <a href="{%url 'tables:tables-list'%}">Look at the list of tables, and the reservations for each of them</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
         {% endif %}
     </p>
 {%endblock%}

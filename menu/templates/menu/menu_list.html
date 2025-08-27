@@ -22,6 +22,6 @@
         <p>No menu categories found.</p>
     {% endfor %}
     {% if user.is_staff or "Managers" in user.groups.all.0.name %}
-        <input type="button" value="Add new dish" onclick="window.location.href='{% url 'menu:create-dish' %}'">
+        <input type="button" value="Add new dish" onclick="window.location.href='{% url 'menu:add-dish' %}'">
     {% endif %}
 {%endblock%}
