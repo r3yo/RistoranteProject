@@ -10,27 +10,37 @@ from .models import *
 from .forms import *
 # Create your views here.
 
-class TableBaseView(GroupRequiredMixin):
+class CreateTableView(GroupRequiredMixin, CreateView):
+    group_required = ["Managers"]
+    model = Table
+    form_class = TableForm
+    success_url = reverse_lazy('tables:tables-list')
+    template_name = "tables/create_table.html"
+
+class UpdateTableView(GroupRequiredMixin, UpdateView):
     group_required = ["Managers"]
     model = Table
     form_class = TableForm
     context_object_name = "table"
     success_url = reverse_lazy('tables:tables-list')
+    template_name = "tables/update_table.html"
 
     def get_object(self, queryset = None):
         return get_object_or_404(Table, pk = self.kwargs.get("pk"))
-    
 
-class CreateTableView(TableBaseView, CreateView):
-    template_name = "tables/create_table.html"
-
-class UpdateTableView(TableBaseView, UpdateView):
-    template_name = "tables/update_table.html"
-
-class DeleteTableView(TableBaseView, DeleteView):
+class DeleteTableView(GroupRequiredMixin, DeleteView):
+    group_required = ["Managers"]
+    model = Table
+    context_object_name = "table"
+    success_url = reverse_lazy('tables:tables-list')
     template_name = "tables/delete_table.html"
 
-class TableView(TableBaseView, ListView):
+    def get_object(self, queryset = None):
+        return get_object_or_404(Table, pk = self.kwargs.get("pk"))
+
+class TableView(GroupRequiredMixin, ListView):
+    group_required = ["Managers"]
+    model = Table
     template_name = "tables/tables_list.html"
     context_object_name = "tables"
 
@@ -46,14 +56,21 @@ class TableView(TableBaseView, ListView):
         
         return context
 
-class TableDetailView(TableBaseView, DetailView):
+class TableDetailView(GroupRequiredMixin, DetailView):
+    group_required = ["Managers"]
+    model = Table
+    context_object_name = "table"
+    success_url = reverse_lazy('tables:tables-list')
     template_name = "tables/table_detail.html"
+
+    def get_object(self, queryset = None):
+        return get_object_or_404(Table, pk = self.kwargs.get("pk"))
 
 class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = CreateReservationForm
     template_name = 'tables/make_reservation.html'
-    success_url = reverse_lazy('tables:tables-list')
+    success_url = reverse_lazy('home')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

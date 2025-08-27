@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from datetime import *
 from django.utils.timezone import *
@@ -7,6 +8,11 @@ import random
 import string
 
 # Create your models here.
+def generate_unique_slug(model, prefix):
+    while True:
+        slug = f"{prefix}-{random.choice(string.ascii_uppercase)}{random.randint(1000,9999)}"
+        if not model.objects.filter(slug = slug).exists():
+            return slug
 
 class Table(models.Model):
 
@@ -21,7 +27,7 @@ class Table(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = f"table-{self.number}"
+            self.slug = generate_unique_slug(Table, "TBL")
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -40,14 +46,8 @@ class Reservation(models.Model):
 
     def save(self, *args, **kwargs):  
         if not self.slug:
-            self.slug = self.generate_unique_slug()
+            self.slug = generate_unique_slug(Reservation, "R")
         super().save(*args, **kwargs)
-    
-    def generate_unique_slug(self):
-        while True:
-            slug = f"R-{random.choice(string.ascii_uppercase)}{random.randint(1000,9999)}"
-            if not Reservation.objects.filter(slug = slug).exists():
-                return slug
 
     def __str__(self):
         return f"Reservation for {self.guests} at {self.start_hour} on {self.date}"
