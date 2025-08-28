@@ -15,7 +15,7 @@ class TableForm(forms.ModelForm):
         seats = self.cleaned_data['seats']
         table = self.instance  # the Table being updated
         # flat = True returns a flat list of values instead of tuples
-        max_reserved = table.reservations.filter(date__gte=now().date()).order_by('-guests').values_list('guests', flat=True).first() or 0 # max_reserved is an integer, not a tuple
+        max_reserved = table.reservations.filter(date__gte = timezone.localdate()).order_by('-guests').values_list('guests', flat=True).first() or 0 # max_reserved is an integer, not a tuple
         if seats < max_reserved:
             raise forms.ValidationError(
                 f"Cannot reduce seats below {max_reserved} because of existing reservations."
@@ -29,7 +29,7 @@ class ReservationForm(forms.ModelForm):
     # Hours as multiple choices
     time = forms.MultipleChoiceField(
         choices = Table.HOURS_CHOICES,
-        widget = forms.SelectMultiple(attrs={"size": "8"}),  # multi-select dropdown
+        widget = forms.SelectMultiple(attrs = {'size' : '8', 'id' : 'reservation-time'}),  # multi-select dropdown
         label = "Select Hour(s)",
         required = True
     )
@@ -43,7 +43,8 @@ class ReservationForm(forms.ModelForm):
         self.fields['date'].widget = forms.DateInput(
             attrs = {
                 'type': 'date',
-                'min': today.strftime('%Y-%m-%d')
+                'min': today.strftime('%Y-%m-%d'),
+                'id' : 'reservation-date'
             }
         )
 

@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import *
 from django.views.generic import *
 from django.shortcuts import *
@@ -46,12 +47,11 @@ class TableView(GroupRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        today = date.today()
 
         #Add active reservations for each table, updates automatically
         for table in context['tables']:
             table.active_reservations = table.reservations.filter(
-                date__gte = today,
+                date__gte = timezone.localdate()
             ).order_by("date", "start_hour")
         
         return context
@@ -70,7 +70,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = CreateReservationForm
     template_name = 'tables/make_reservation.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('tables:user-reservations')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -80,11 +80,64 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         return super().form_valid(form)
 
+class ReservationListView(LoginRequiredMixin, ListView):
+    model = Reservation
+    template_name = "tables/user_reservations.html"
+    context_object_name = "reservations"
+
+    def get_queryset(self):
+        return Reservation.objects.filter(
+            user = self.request.user,
+            date__gte = timezone.localdate()
+        ).order_by("date", "start_hour")
+
+class ReservationHistoryView(LoginRequiredMixin, ListView):
+    model = Reservation
+    template_name = "tables/reservations_history.html"
+    context_object_name = "reservations"
+
+    def get_queryset(self):
+        return Reservation.objects.filter(
+            user = self.request.user
+        ).filter(
+            models.Q(date__lt = timezone.localdate()) |
+            models.Q(date = timezone.localdate(), start_hour__lt = timezone.localtime())
+        ).order_by("-date", "-start_hour")
+
+# Check function for reservation update/cancellation permission
+def is_user_authorized(request, reservation):
+    return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
+
 @login_required
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
-    reservation.delete()
-    return redirect("tables:tables-list")
+
+    if not is_user_authorized(request, reservation):
+        return HttpResponseForbidden("You don't have permission to cancel this reservation.")
+
+    if request.method == "POST":
+        # Delete the reservation and redirect
+        reservation.delete()
+        return redirect("tables:user-reservations")
+
+    return render(request, "tables/cancel_reservation.html", {"reservation" : reservation})
+
+@login_required
+def update_reservation(request, pk):
+    reservation = get_object_or_404(Reservation, slug = pk)
+
+    if not is_user_authorized(request, reservation):
+        return HttpResponseForbidden("You don't have permission to update this reservation.")
+
+    if request.method == "POST":
+        form = ReservationForm(request.POST, instance = reservation)
+        if form.is_valid():
+            form.save
+            return redirect('tables:user-reservations')
+    else:
+        form = ReservationForm(instance = reservation)
+    
+    return render(request, "tables/update_reservation.html", {"form" : form})
 
 def availability_check(request):
     if request.method == "POST":

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>My Active Reservations</h2>
+
+    {% if reservations %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <tr>
+                <th>Date</th>
+                <th>Guests</th>
+                <th>Actions</th>
+            </tr>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.date }}</td>
+                    <td>{{ reservation.guests }}</td>
+                    <td>
+                        <a href="{% url 'tables:update-reservation' reservation.pk %}">Edit reservation</a>
+                        <a href="{% url 'tables:cancel-reservation' reservation.pk %}">Cancel reservation</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>You have no reservations.</p>
+    {% endif %}
+
+    <h2><a href="{% url 'tables:reservations-history' %}">Past reservations history</a></h2>
+
+{% endblock %}

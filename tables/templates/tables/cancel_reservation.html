@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div style="max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <h2>Cancel Reservation</h2>
+    <p>Are you sure you want to cancel your reservation for <strong>{{ reservation.date }}</strong> with <strong>{{ reservation.guests }}</strong> guests?</p>
+
+    <form action = "{% url 'tables:cancel-reservation' reservation.pk %}" method= "POST">
+      {% csrf_token %}
+      <input type = "submit" value = "Yes, Cancel Reservation" style = "padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      <a href="{% url 'tables:user-reservations' %}" style = "padding: 10px 20px; background-color: #ccc; color: black; text-decoration: none; border-radius: 4px; margin-left: 10px;">No, Go Back</a>
+    </form>
+  </div>
+{% endblock %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title%}Make a Reservation{% endblock %}
@@ -15,5 +16,7 @@
 
         <input type="submit" class="btn btn-success" value="Submit">
     </form>
+
+    <script src="{% static 'js/reservation.js' %}"></script>
 
 {% endblock %}
