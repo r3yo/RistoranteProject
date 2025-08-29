@@ -7,9 +7,41 @@
     <title>{%block title%}{% endblock %}</title>
 </head>
 <body>
-    <section class="container-fluid h-100 pt-5">
-        {%block content%}
+    <!-- Notification Bar -->
+    <div id="notif-wrapper" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+        <button id="notif-toggle">Notifications (<span id="unread-count">0</span>)</button>
+        <div id="notif-dropdown" style="display: none; background: white; border: 1px solid #ccc; width: 300px; max-height: 400px; overflow-y: auto;">
+            <ul id="notif-list"></ul>
+        </div>
+    </div>
 
-        {%endblock%}
+    <section class="container-fluid h-100 pt-5">
+        {% block content %}
+        {% endblock %}
+    </section>
+
+    <!-- Notification JS -->
+    <script>
+        const ws = new WebSocket(
+            (window.location.protocol === "https:" ? "wss" : "ws") +
+            "://" + window.location.host + "/ws/notifications/"
+        );
+
+        ws.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const list = document.getElementById("notif-list");
+            const li = document.createElement("li");
+            li.textContent = data.message + " (" + data.type + ")";
+            list.prepend(li);
+
+            const unreadCount = document.getElementById("unread-count");
+            unreadCount.textContent = parseInt(unreadCount.textContent || "0") + 1;
+        };
+
+        document.getElementById('notif-toggle').addEventListener('click', function() {
+            const dropdown = document.getElementById('notif-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
 </body>
 </html>

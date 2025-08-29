@@ -1,7 +1,8 @@
+from django.db import IntegrityError
+from .utils import *
 from .models import *
 from django import forms
 from django.utils import timezone
-from django.db.models import Max
 
 class TableForm(forms.ModelForm):
 
@@ -33,12 +34,23 @@ class ReservationForm(forms.ModelForm):
         label = "Select Hour(s)",
         required = True
     )
+
+    notes = forms.CharField(required = False)
+
+    join_waitlist = forms.BooleanField(
+        required = False,
+        label = "Add me to the waitlist if no table is available"
+    )
+
     class Meta:
         model = Reservation
-        fields = ['date', 'guests', 'notes', 'time']
+        fields = ['date', 'guests', 'time', 'notes', 'join_waitlist']
 
     def __init__(self, *args, **kwargs):
+        self._user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        self.waitlist_message = None
+
         today = timezone.localdate()
         self.fields['date'].widget = forms.DateInput(
             attrs = {
@@ -48,55 +60,78 @@ class ReservationForm(forms.ModelForm):
             }
         )
 
-class CreateReservationForm(ReservationForm):
-    
-    notes = forms.CharField(required = False)
+    # Helpers
+    def _get_time_range(self, cleaned_data):
+        selected_hours = sorted(int(h) for h in cleaned_data.get("time", []))
 
-    def __init__(self, *args, user=None, **kwargs):
-        self._user = user
-        super().__init__(*args, **kwargs)
+        if not selected_hours:
+            raise forms.ValidationError("Please select at least one hour.")
 
+        return time(hour = selected_hours[0]), time(hour = selected_hours[-1] + 1)
+
+    """
+    Returns a valid table for the given time and guests.
+    - If updating: checks current table for conflicts.
+    - If creating: finds first free table.
+    Raises ValidationError if no table is available.
+    """
+
+    def _get_valid_table(self, guests, date, start, end):
+        """
+        Find the first available table that fits the number of guests
+        and is free during the requested time.
+        Raises ValidationError if no table is available.
+        """
+        
+        my_table = None
+
+        for table in Table.objects.filter(seats = guests).order_by('seats', 'number'):
+            conflicts = get_conflicting_reservations(table, date, start, end)
+
+            if self.instance.pk:
+                conflicts = conflicts.exclude(pk = self.instance.pk)
+
+            if not conflicts.exists():
+                my_table = table
+
+        return my_table
+
+    # Main validation
     def clean(self):
         cleaned_data = super().clean()
-        selected_hours = sorted([int(h) for h in cleaned_data.get('time', [])])
+        start, end = self._get_time_range(cleaned_data)
+        cleaned_data["start_hour"] = start
+        cleaned_data["end_hour"] = end
 
-        cleaned_data['start_hour'] = time(hour  =selected_hours[0])
-        cleaned_data['end_hour'] = time(hour = selected_hours[-1] + 1)
+        table = self._get_valid_table(cleaned_data["guests"], cleaned_data["date"], start, end)
+        cleaned_data["table"] = table  # could be None if no table available
 
-        # Automatic table assignment
-        tables = Table.objects.filter(seats = cleaned_data['guests'])
-        assigned_table = None
-
-        for table in tables:
-            if not Reservation.objects.filter(
-                table=table,
-                date=cleaned_data['date'],
-                start_hour__lt = cleaned_data['end_hour'],
-                end_hour__gt = cleaned_data['start_hour']
-            ).exists():
-                assigned_table = table
-                break
-
-        if assigned_table is None:
-            raise forms.ValidationError("No table available for selected hours")
-
-        cleaned_data['table'] = assigned_table
         return cleaned_data
 
-    def save(self, commit=True):
-
+    # Save
+    def save(self, commit = True):
         instance = super().save(commit = False)
-        instance.start_hour = self.cleaned_data['start_hour']
-        instance.end_hour = self.cleaned_data['end_hour']
-        instance.table = self.cleaned_data['table']
-        instance.user = self._user
+        instance.start_hour = self.cleaned_data["start_hour"]
+        instance.end_hour = self.cleaned_data["end_hour"]
+        instance.table = self.cleaned_data["table"]
+
+        if self._user and not instance.pk:
+            instance.user = self._user
 
         if commit:
             instance.save()
+
         return instance
 
 class AvailabilityCheckForm(ReservationForm):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['time'].required = False
-    pass
+    
+    class Meta(ReservationForm.Meta):
+        exclude = ['notes', 'join_waitlist']
+    
+    def clean(self):
+        # Just return cleaned_data as-is, no table assignment or conflict checks
+        return super(forms.ModelForm, self).clean()

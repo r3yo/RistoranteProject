@@ -6,14 +6,18 @@
     {% if reservations %}
         <table border="1" cellpadding="8" cellspacing="0">
             <tr>
+                <th>Table</th>
                 <th>Date</th>
                 <th>Guests</th>
+                <th>Time</th>
                 <th>Actions</th>
             </tr>
             {% for reservation in reservations %}
                 <tr>
+                    <td>{{ reservation.table }}</td>
                     <td>{{ reservation.date }}</td>
                     <td>{{ reservation.guests }}</td>
+                    <td>{{ reservation.start_hour|time:"H:i" }}-{{ reservation.end_hour|time:"H:i" }}</td>
                     <td>
                         <a href="{% url 'tables:update-reservation' reservation.pk %}">Edit reservation</a>
                         <a href="{% url 'tables:cancel-reservation' reservation.pk %}">Cancel reservation</a>
