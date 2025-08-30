@@ -63,10 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Dropdown toggle ---
     toggleBtn.addEventListener('click', function() {
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-
-        if (dropdown.style.display === 'none') {
-            markAllRead();  // ✅ just call the existing function
-        }
     });
 
     // --- Button click for marking all as read ---
