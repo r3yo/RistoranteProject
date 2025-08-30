@@ -195,7 +195,7 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
 def is_user_authorized(request, reservation):
     return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
 
-@login_required(login_url = '/login-or-register/')
+@login_required
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 
@@ -210,7 +210,7 @@ def cancel_reservation(request, pk):
 
     return render(request, "tables/cancel_reservation.html", {"reservation" : reservation})
 
-@login_required(login_url = '/login-or-register/')
+@login_required
 def update_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 

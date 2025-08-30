@@ -17,7 +17,7 @@
         <tr>
             <td>{{ table.number }}</td>
             <td>{{ table.seats }}</td>
-            <td>{{ table.reservations.count }}</td>
+            <td>{{ table.active_reservations.count }}</td>
             <td><input type="button" onclick="window.location.href='{% url 'tables:table-detail' table.pk %}'" value="Check"></td>
         </tr>
         {% empty %}

@@ -7,7 +7,7 @@
 <h2>Reservations</h2>
 {% if table.reservations %}
     <ul>
-        {% for reservation in table.reservations %}
+        {% for reservation in table.active_reservations.all %}
             <li>
                 {{ reservation.date }} 
                 ({{ reservation.start_hour }} - {{ reservation.end_hour }}) - 
