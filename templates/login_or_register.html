@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Login or register{% endblock %}
+
+{% block content %}
+    <h2>Please login or register to continue</h2>
+
+    <a href="{% url 'login' %}?next={{ next }}">Login</a> /
+    <a href="{% url 'register' %}?next={{ next }}">Register</a>
+
+{% endblock%}

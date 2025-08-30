@@ -8,6 +8,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 def home(request):
     return render(request, template_name="extended.html")
 
+def login_or_register(request):
+    return render(request, 'login_or_register.html', {
+        'next': request.GET.get('next', '/'),
+    })
+
 class UserCreateView(CreateView):
     form_class = CreateClientForm
     template_name = "create_user.html"

@@ -23,14 +23,15 @@ from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("register/", UserCreateView.as_view(), name="register"),
+    path('login-or-register/', login_or_register, name = 'login_or_register'),
+    path("register/", UserCreateView.as_view(), name = "register"),
     path("register_manager/", ManagerCreateView.as_view(), name = "register-manager"),
-    path("login/", auth_views.LoginView.as_view(), name="login"),
-    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
-    re_path(r'^$|^\/$|^home\/$', home, name="home"),
+    path("login/", auth_views.LoginView.as_view(), name = "login"),
+    path("logout/", auth_views.LogoutView.as_view(), name = "logout"),
+    re_path(r'^$|^\/$|^home\/$', home, name = "home"),
     path('menu/', include('menu.urls')),
     path('tables/', include('tables.urls')),
-    path('notifications/', include('notifications.urls', namespace='notifications')),
+    path('notifications/', include('notifications.urls', namespace = 'notifications')),
 ]
 
 if settings.DEBUG:

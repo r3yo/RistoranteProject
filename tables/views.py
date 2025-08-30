@@ -118,6 +118,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = ReservationForm
     template_name = 'tables/make_reservation.html'
+    login_url = '/login-or-register/'
     success_url = reverse_lazy('tables:user-reservations')
 
     def get_form_kwargs(self):
@@ -131,9 +132,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
 
         if table:
             # Table available → save reservation
-            reservation = form.save()
-            reservation.user = self.request.user
-            reservation.save()
+            form.save()
             messages.success(self.request, "Reservation created successfully.")
             return super().form_valid(form)
         
@@ -156,6 +155,17 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
             # No table and user didn't join waitlist
             form.add_error(None, "No table available and you did not join the waitlist.")
             return self.form_invalid(form)
+        
+    def form_invalid(self, form):
+    # Called if form.is_valid() fails
+        for field, errors in form.errors.items():
+            for error in errors:
+                if field == "__all__":
+                    messages.error(self.request, error)
+                else:
+                    messages.error(self.request, f"{field}: {error}")
+
+        return super().form_invalid(form)
 
 class ReservationListView(LoginRequiredMixin, ListView):
     model = Reservation
@@ -185,7 +195,7 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
 def is_user_authorized(request, reservation):
     return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
 
-@login_required
+@login_required(login_url = '/login-or-register/')
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 
@@ -200,7 +210,7 @@ def cancel_reservation(request, pk):
 
     return render(request, "tables/cancel_reservation.html", {"reservation" : reservation})
 
-@login_required
+@login_required(login_url = '/login-or-register/')
 def update_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 
@@ -219,10 +229,7 @@ def update_reservation(request, pk):
             if form.cleaned_data.get("table"):
                 # Table is available --> notify waitlist first
                 
-                updated_reservation = form.save()
-
-                # Save the updated reservation
-                updated_reservation.save()
+                form.save()
 
                 notify_waitlist(old_table, old_date, old_start, old_end)
                 messages.success(request, "Reservation updated successfully.")

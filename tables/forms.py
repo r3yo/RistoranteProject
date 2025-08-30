@@ -90,9 +90,13 @@ class ReservationForm(forms.ModelForm):
 
             if self.instance.pk:
                 conflicts = conflicts.exclude(pk = self.instance.pk)
+            
+            if conflicts.filter(user = self._user).exists():
+                raise forms.ValidationError("You already have a reservation during this time.")
 
             if not conflicts.exists():
                 my_table = table
+                break
 
         return my_table
 
