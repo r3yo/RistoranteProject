@@ -87,6 +87,33 @@ def add_to_waitlist(user, date, start_hour, end_hour, guests):
     except IntegrityError:
         return False
 
+def notify_waitlist(table, date, start_hour, end_hour):
+    """
+    Notify all users on the waitlist if a table becomes available
+    for the specified date, time, and number of guests.
+    """
+    waitlist_entries = WaitlistEntry.objects.filter(
+        date = date,
+        start_hour__gte = start_hour,
+        end_hour__lte = end_hour,
+        guests = table.seats
+    )
+
+    for entry in waitlist_entries:
+        # Check conflicts only for this table
+        conflict = get_conflicting_reservations(table, entry.date, entry.start_hour, entry.end_hour).exists()
+
+        if not conflict:
+            # Notify user
+            send_notification(
+                user = entry.user,
+                message = f"Tavolo disponibile il {entry.date} {entry.start_hour}-{entry.end_hour}",
+                notif_type = 'UPDATE'
+            )
+
+            # Remove from waitlist
+            entry.delete()
+
 class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = ReservationForm
@@ -233,33 +260,6 @@ def update_reservation(request, pk):
         form = ReservationForm(instance = reservation, user = request.user)
 
     return render(request, "tables/update_reservation.html", {"form": form})
-
-def notify_waitlist(table, date, start_hour, end_hour):
-    """
-    Notify all users on the waitlist if a table becomes available
-    for the specified date, time, and number of guests.
-    """
-    waitlist_entries = WaitlistEntry.objects.filter(
-        date = date,
-        start_hour__gte = start_hour,
-        end_hour__lte = end_hour,
-        guests = table.seats
-    )
-
-    for entry in waitlist_entries:
-        # Check conflicts only for this table
-        conflict = get_conflicting_reservations(table, entry.date, entry.start_hour, entry.end_hour).exists()
-
-        if not conflict:
-            # Notify user
-            send_notification(
-                user = entry.user,
-                message = f"Tavolo disponibile il {entry.date} {entry.start_hour}-{entry.end_hour}",
-                notif_type = 'UPDATE'
-            )
-
-            # Remove from waitlist
-            entry.delete()
 
 def availability_check(request):
     if request.method == "POST":
