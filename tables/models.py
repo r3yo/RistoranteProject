@@ -24,6 +24,9 @@ class Table(models.Model):
 
     class Meta:
         verbose_name_plural = "Tables"
+    
+    def active_reservations(self):
+        return self.reservations.filter(date__gte = timezone.localdate()).order_by("date", "start_hour")
 
     def save(self, *args, **kwargs):
         if not self.slug:

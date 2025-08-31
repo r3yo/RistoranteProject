@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from .models import Notification
 
 @login_required
+@never_cache # Prevents browser from caching the return value, always fetches fresh data
 def notifications_json(request):
     # Return last 10 notifications
     notifications = Notification.objects.filter(user = request.user, read = False).order_by('-created_at')[:10]

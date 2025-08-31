@@ -48,17 +48,6 @@ class TableView(GroupRequiredMixin, ListView):
     template_name = "tables/tables_list.html"
     context_object_name = "tables"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        #Add active reservations for each table, updates automatically
-        for table in context['tables']:
-            table.active_reservations = table.reservations.filter(
-                date__gte = timezone.localdate()
-            ).order_by("date", "start_hour")
-        
-        return context
-
 class TableDetailView(GroupRequiredMixin, DetailView):
     group_required = ["Managers"]
     model = Table
@@ -189,7 +178,7 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
         ).filter(
             models.Q(date__lt = timezone.localdate()) |
             models.Q(date = timezone.localdate(), start_hour__lt = timezone.localtime())
-        ).order_by("-date", "-start_hour")
+        ).order_by("-date", "-start_hour")[:10]
 
 # Check function for reservation update/cancellation permission
 def is_user_authorized(request, reservation):

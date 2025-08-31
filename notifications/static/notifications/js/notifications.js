@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- Load existing notifications via AJAX ---
     async function loadNotifications() {
-        const response = await fetch(jsonUrl);
+        const response = await fetch(jsonUrl); // cache : no store makes sure that when loadNotifs is called, the server is asked for fresh data
         const data = await response.json();
 
         notifList.innerHTML = "";
