@@ -6,8 +6,15 @@ from ristorante.forms import *
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import logout
 
+from tables.views import send_reminders
+
 def home(request):
-    return render(request, template_name="extended.html")
+    if request.user.is_authenticated:
+        # Only send reminders once per session
+        if not request.session.get('sent_reservation_reminders', False):
+            send_reminders(request.user)
+            request.session['sent_reservation_reminders'] = True
+    return render(request, template_name = "extended.html")
 
 def login_or_register(request):
     if request.user.is_authenticated:

@@ -3,7 +3,7 @@ from asgiref.sync import async_to_sync
 from .models import Notification
 from django.core.mail import send_mail
 
-def send_notification(user, message, notif_type = 'CONFIRM'):
+def send_notification(user, message, notif_type):
     # Save in DB
     Notification.objects.create(user = user, message = message, type = notif_type)
 

@@ -96,12 +96,23 @@ def notify_waitlist(table, date, start_hour, end_hour):
             # Notify user
             send_notification(
                 user = entry.user,
-                message = f"Tavolo disponibile il {entry.date} {entry.start_hour}-{entry.end_hour}",
+                message = f"Table available on {entry.date} at {entry.start_hour}-{entry.end_hour}",
                 notif_type = 'UPDATE'
             )
 
             # Remove from waitlist
             entry.delete()
+
+def send_reminders(user):
+    """
+    Send out reminders to the logged in user
+    """
+    for r in Reservation.objects.filter(user = user, date = timezone.localdate(), start_hour__gte = timezone.localtime()):
+        send_notification(
+            user = user,
+            message = f"Today you have a reservation for {r.guests} from {r.start_hour} to {r.end_hour}.",
+            notif_type = 'REMINDER'
+        )
 
 class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
@@ -110,23 +121,39 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
     success_url = reverse_lazy('tables:user-reservations')
 
+    def get_form_class(self):
+        if self.request.user.groups.filter(name = "Managers").exists() or self.request.user.is_staff:
+            return ManagerReservationForm
+        return ReservationForm
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user      # pass user into the form constructor
+        kwargs['user'] = self.request.user # pass user into the form constructor
+        
         return kwargs
 
     def form_valid(self, form):
         table = form.cleaned_data["table"]
         join_waitlist = form.cleaned_data["join_waitlist"]
+        
+        if self.request.user.groups.filter(name = "Managers").exists() or self.request.user.is_superuser:
+            user = form.cleaned_data["user"]
+        else:
+            user = self.request.user
 
         if table:
-            # Table available → save reservation
+            # Table available --> save reservation
             form.save()
             messages.success(self.request, "Reservation created successfully.")
+            send_notification(
+                user = user,
+                message = f"Reservation created successfully for {form.cleaned_data["guests"]} on {form.cleaned_data["date"]} at {dict(Table.HOURS_CHOICES).get(int(form.cleaned_data["time"][0]))}.",
+                notif_type = 'CONFIRM'
+            )
             return super().form_valid(form)
         
         elif join_waitlist:
-            # No table → add to waitlist
+            # No table --> add to waitlist
             added = add_to_waitlist(
                 self.request.user,
                 form.cleaned_data["date"],
@@ -144,6 +171,13 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
             # No table and user didn't join waitlist
             form.add_error(None, "No table available and you did not join the waitlist.")
             return self.form_invalid(form)
+        
+    def get_success_url(self):
+        # If the reservation user is the same as the logged-in user
+        if self.object.user == self.request.user:
+            return reverse_lazy("tables:user-reservations")
+        else:
+            return reverse_lazy("tables:table-detail", kwargs = {'pk' : self.object.table.slug})
         
     def form_invalid(self, form):
     # Called if form.is_valid() fails
@@ -184,6 +218,17 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
 def is_user_authorized(request, reservation):
     return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
 
+def redirect_after_reservation(reservation, user):
+    """
+    Redirects based on whether the reservation belongs to the current user.
+    - If the reservation is for the user → redirect to user's reservations
+    - Otherwise → redirect to the table detail page
+    """
+    if reservation.user == user:
+        return redirect("tables:user-reservations")
+    else:
+        return redirect("tables:table-detail", pk = reservation.table.slug)
+
 @login_required
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
@@ -195,7 +240,7 @@ def cancel_reservation(request, pk):
         # Delete the reservation and redirect
         reservation.delete()
         notify_waitlist(reservation.table, reservation.date, reservation.start_hour, reservation.end_hour)
-        return redirect("tables:user-reservations")
+        return redirect_after_reservation(reservation, request.user)
 
     return render(request, "tables/cancel_reservation.html", {"reservation" : reservation})
 
@@ -241,7 +286,7 @@ def update_reservation(request, pk):
                 # No table and user didn't join waitlist
                 messages.error(request, "No table available and you did not join the waitlist.")
 
-            return redirect('tables:user-reservations')
+            return redirect_after_reservation(reservation, request.user)
 
         else:
             # Show form errors
@@ -251,6 +296,8 @@ def update_reservation(request, pk):
                         messages.error(request, error)
                     else:
                         messages.error(request, f"{field}: {error}")
+
+            return redirect_after_reservation(reservation, request.user)
 
     else:
         form = ReservationForm(instance = reservation, user = request.user)

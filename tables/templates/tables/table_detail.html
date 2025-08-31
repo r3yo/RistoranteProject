@@ -10,7 +10,7 @@
         {% for reservation in table.active_reservations %}
             <li>
                 {{ reservation.date }} 
-                ({{ reservation.start_hour }} - {{ reservation.end_hour }}) - 
+                ({{ reservation.start_hour|time:"H:i" }} - {{ reservation.end_hour|time:"H:i" }}) - 
                 {{ reservation.guests }} guests - Reserved by {{ reservation.user.first_name }} {{reservation.user.last_name}}
             </li>
             <a href="{%url 'tables:update-reservation' reservation.pk%}">Update reservation</a>

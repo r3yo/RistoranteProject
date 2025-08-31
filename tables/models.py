@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from datetime import *
-from django.utils.timezone import *
+from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.models import User
 import random

@@ -127,6 +127,28 @@ class ReservationForm(forms.ModelForm):
 
         return instance
 
+class ManagerReservationForm(ReservationForm):
+
+    user = forms.ModelChoiceField(
+        queryset = User.objects.exclude(is_superuser = True),
+        required = True,
+        label = "Select User"
+    )
+
+    class Meta(ReservationForm.Meta):
+        fields = ['user'] + ReservationForm.Meta.fields
+    
+    def save(self, commit = True):
+        instance = super().save(commit = False)
+        # Use the user selected by the manager
+
+        instance.user = self.cleaned_data["user"]
+
+        if commit:
+            instance.save()
+
+        return instance
+
 class AvailabilityCheckForm(ReservationForm):
 
     def __init__(self, *args, **kwargs):
