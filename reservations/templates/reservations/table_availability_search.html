@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Search availability{% endblock %}
 
@@ -7,5 +8,7 @@
     <form method="POST">{% csrf_token %}
         {{form.as_p}}
         <input type = "submit" value = "Search">
-        <input type = "button" onclick = "window.location.href='{% url 'tables:tables-list' %}'" value = "Cancel">
+        <input type = "button" onclick = "window.location.href='{% url 'home' %}'" value = "Cancel">
+    </form>
+    <script src="{% static 'reservations/js/reservation.js' %}"></script>
 {%endblock%}

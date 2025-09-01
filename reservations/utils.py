@@ -1,4 +1,5 @@
-from .models import Reservation, Table
+from .models import Reservation
+from tables.models import Table
 
 def get_conflicting_reservations(table, date, start_hour, end_hour):
     """

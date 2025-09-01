@@ -31,6 +31,7 @@ urlpatterns = [
     re_path(r'^$|^\/$|^home\/$', home, name = "home"),
     path('menu/', include('menu.urls')),
     path('tables/', include('tables.urls')),
+    path('reservations/', include('reservations.urls')),
     path('notifications/', include('notifications.urls', namespace = 'notifications')),
 ]
 

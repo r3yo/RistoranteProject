@@ -19,8 +19,8 @@
                     <td>{{ reservation.guests }}</td>
                     <td>{{ reservation.start_hour|time:"H:i" }}-{{ reservation.end_hour|time:"H:i" }}</td>
                     <td>
-                        <a href="{% url 'tables:update-reservation' reservation.pk %}">Edit reservation</a>
-                        <a href="{% url 'tables:cancel-reservation' reservation.pk %}">Cancel reservation</a>
+                        <a href="{% url 'reservations:update-reservation' reservation.pk %}">Edit reservation</a>
+                        <a href="{% url 'reservations:cancel-reservation' reservation.pk %}">Cancel reservation</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -29,6 +29,6 @@
         <p>You have no reservations.</p>
     {% endif %}
 
-    <h2><a href="{% url 'tables:reservations-history' %}">Past reservations history</a></h2>
+    <h2><a href="{% url 'reservations:reservations-history' %}">Past reservations history</a></h2>
 
 {% endblock %}

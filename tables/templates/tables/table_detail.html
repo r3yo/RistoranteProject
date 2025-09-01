@@ -13,8 +13,8 @@
                 ({{ reservation.start_hour|time:"H:i" }} - {{ reservation.end_hour|time:"H:i" }}) - 
                 {{ reservation.guests }} guests - Reserved by {{ reservation.user.first_name }} {{reservation.user.last_name}}
             </li>
-            <a href="{%url 'tables:update-reservation' reservation.pk%}">Update reservation</a>
-            <a href="{%url 'tables:cancel-reservation' reservation.pk%}">Cancel reservation</a>
+            <a href="{%url 'reservations:update-reservation' reservation.pk%}">Update reservation</a>
+            <a href="{%url 'reservations:cancel-reservation' reservation.pk%}">Cancel reservation</a>
         {% endfor %}
     </ul>
 {% else %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search availability{% endblock %}
+
+{% block content %}
+    <h2>Available Tables</h2>
+
+    {% if tables_with_availability %}
+        <!-- Sorting controls -->
+        <div>
+            <button id="sort-table-number">Sort by Table Number</button>
+            <button id="sort-seats">Sort by Seats</button>
+            <button id="sort-slots">Sort by Free Slots</button>
+        </div>
+
+        <ul id = "availability-list">
+            {% for item in tables_with_availability %}
+                <li class = "table-item"
+                    data-table = "{{ item.table.number }}"
+                    data-seats = "{{ item.table.seats }}"
+                    data-slots = "{{ item.hours|length }}">
+                    
+                    <h3>Table {{ item.table.number }} ({{ item.table.seats }} seats)</h3>
+                    
+                    Available hours: <br>
+                    {% for h, label in item.hours %}
+                        {{ label }}{% if not forloop.last %}; {% endif %}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No available tables</p>
+    {% endif %}
+    <script src="{% static 'reservations/js/availability_sort.js' %}"></script>
+{% endblock %}

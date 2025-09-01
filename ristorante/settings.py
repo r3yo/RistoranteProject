@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'menu.apps.MenuConfig',
     'tables.apps.TablesConfig',
+    'reservations.apps.ReservationsConfig',
     'channels',
     'notifications'
 ]

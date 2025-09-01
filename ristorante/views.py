@@ -6,7 +6,7 @@ from ristorante.forms import *
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import logout
 
-from tables.views import send_reminders
+from reservations.views import send_reminders
 
 def home(request):
     if request.user.is_authenticated:

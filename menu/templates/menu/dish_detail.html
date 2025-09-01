@@ -17,11 +17,11 @@
         {%endif%}
     </p>
     {% if dish.img %}
-        <img src = "{{ dish.img.url }}" alt = "{{ dish.name }}" style="max-width:300px;">
+        <img src = "{{ dish.img.url }}" alt = "{{ dish.name }}" style = "max-width:300px;">
     {% endif %}
     <a href="{% url "menu:menu-list" %}">Back to menu</a>
     {% if user.is_staff or "Managers" in user.groups.all.0.name %}
-        <input type="button" onclick="window.location.href='{% url 'menu:delete-dish' dish.pk %}'" value="Delete">
-        <input type="button" onclick="window.location.href='{% url 'menu:update-dish' dish.pk %}'" value="Update">
+        <input type="button" onclick = "window.location.href='{% url 'menu:delete-dish' dish.pk %}'" value="Delete">
+        <input type="button" onclick = "window.location.href='{% url 'menu:update-dish' dish.pk %}'" value="Update">
     {% endif %}
 {%endblock%}
