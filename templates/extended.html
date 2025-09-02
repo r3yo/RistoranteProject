@@ -1,21 +1,10 @@
 {% extends "base.html" %}
 
-{%block title%}Home page{%endblock%}
+{% block title %}Home Page{% endblock %}
 
-{%block content%}
-    <h1>Restaurant homepage</h1>
-    <p>
-        <a href="{%url 'menu:menu-list'%}">Look at the menu!</a>
-        <a href="{%url 'reservations:make-reservation'%}">Make a reservation!</a>
-        {% if user.is_staff or "Manager" in user.groups.all.0.name %}
-            <a href="{%url 'tables:add-table'%}">Add new table</a>
-            <a href="{%url 'tables:tables-list'%}">Look at the list of tables, and the reservations for each of them</a>
-        {% endif %}
-        {% if user.is_authenticated %}
-            <form method="post" action="{% url 'logout' %}">{% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-            <a href="{%url 'reservations:user-reservations'%}">My reservations</a>
-        {% endif %}
-    </p>
-{%endblock%}
+{% block content %}
+    <div class="text-center mt-5">
+        <h1>Welcome to Our Restaurant</h1>
+        <p class="lead">Use the navbar above to browse the menu, make reservations, or just take a look at our photos.</p>
+    </div>
+{% endblock %}

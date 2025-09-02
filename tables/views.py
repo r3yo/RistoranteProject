@@ -43,6 +43,7 @@ class TableView(GroupRequiredMixin, ListView):
     model = Table
     template_name = "tables/tables_list.html"
     context_object_name = "tables"
+    ordering = ['number']
 
 class TableDetailView(GroupRequiredMixin, DetailView):
     group_required = ["Managers"]

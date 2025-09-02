@@ -3,30 +3,111 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>{%block title%}{% endblock %}</title>
+        <title>{% block title %}{% endblock %}</title>
+
+        <!-- Bootstrap and custom CSS-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static "css/crispy_forms.css" %}">
+
+        <!-- Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
-    <body>
-        {% if user.is_authenticated %}
-            <!-- Notification Bar -->
-            <div id="notif-wrapper"
-                data-json-url="{% url 'notifications:json' %}"
-                data-mark-url="{% url 'notifications:mark_all_read' %}"
-                style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
-                <button id="notif-toggle">Notifications (<span id="unread-count">0</span>)</button>
-                <div id="notif-dropdown" style="display: none; background: white; border: 1px solid #ccc; width: 300px; max-height: 400px; overflow-y: auto; padding: 10px;">
-                    <ul id="notif-list" style="list-style: none; padding: 0;"></ul>
-                    <button id="mark-all-read" style="margin-top: 10px;">Mark all read</button>
-                </div>
+    <body class="bg-light">
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <a class="navbar-brand" href="/">Restaurant</a>
+            <!-- Toggle button for small screens -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Collapsible content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+
+                <!-- Page links + Check Availability button -->
+                <ul class="navbar-nav mr-auto">
+                    {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarTablesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Tables
+                            </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarTablesDropdown">
+                                    <a class="dropdown-item" href="{% url 'tables:tables-list' %}">Tables List</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url 'tables:add-table' %}">Add New Table</a>
+                                </div>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarResDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reservations
+                        </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarResDropdown">
+                                <a class="dropdown-item" href="{% url 'reservations:user-reservations' %}">My Reservations</a>
+                                <a class="dropdown-item" href="{% url 'reservations:reservations-history' %}">Past Reservations</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'reservations:make-reservation' %}">Make New Reservation</a>
+                            </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarMenuDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Menu
+                        </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarMenuDropdown">
+                                <a class="dropdown-item" href="{% url 'menu:menu-list' %}">Dishes List</a>
+                                <a class="dropdown-item" href="{% url 'menu:search' %}">Search Dishes</a>
+                                {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url 'menu:add-dish' %}">Add New Dish</a>
+                                {% endif %}
+                            </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-success ml-2" href="{% url 'reservations:availability-check' %}">Check Availability</a>
+                    </li>
+                </ul>
+
+                <!-- Auth + notifications -->
+                <ul class="navbar-nav ml-auto d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown mr-3" id="notif-wrapper" data-json-url="{% url 'notifications:json' %}" data-mark-url="{% url 'notifications:mark_all_read' %}">
+                            <button class="btn btn-primary dropdown-toggle" id="notif-toggle" data-toggle="dropdown">
+                                Notifications (<span id="unread-count">0</span>)
+                            </button>
+                            <div id="notif-dropdown" class="dropdown-menu dropdown-menu-right p-2" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                                <ul id="notif-list" class="list-unstyled mb-2"></ul>
+                                <button id="mark-all-read" class="btn btn-sm btn-light btn-block">Mark all read</button>
+                            </div>
+                        </li>
+                        {% if user.is_superuser %}
+                            <li class="nav-item mr-2"><a href="{% url 'register-manager' %}" class="btn btn-outline-primary">Register Manager</a></li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">Logout</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item mr-2"><a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a></li>
+                        <li class="nav-item"><a href="{% url 'login' %}" class="btn btn-primary">Login</a></li>
+                    {% endif %}
+                </ul>
+
             </div>
-        {% endif %}
-        <section class="container-fluid h-100 pt-5">
-            {% block content %}
-            {% endblock %}
+        </nav>
+
+        <!-- Main content -->
+        <section class="container pt-4">
+            {% block content %}{% endblock %}
         </section>
+
         {% if user.is_authenticated %}
             <script src="{% static 'notifications/js/notifications.js' %}"></script>
         {% endif %}
+
     </body>
 </html>

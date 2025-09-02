@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <div style="max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
-    <h2>Cancel Reservation</h2>
-    <p>Are you sure you want to cancel your reservation for <strong>{{ reservation.date }}</strong> with <strong>{{ reservation.guests }}</strong> guests?</p>
+{% block title %}Cancel Reservation{% endblock %}
 
-    <form action = "{% url 'reservations:cancel-reservation' reservation.pk %}" method= "POST">
-      {% csrf_token %}
-      <input type = "submit" value = "Yes, Cancel Reservation" style = "padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      <a href="{{ request.META.HTTP_REFERER }}" style = "padding: 10px 20px; background-color: #ccc; color: black; text-decoration: none; border-radius: 4px; margin-left: 10px;">No, Go Back</a>
-    </form>
+{% block content %}
+  <div class="row justify-content-center mt-5">
+      <div class="col-md-6">
+          <div class="card shadow-sm p-4">
+              <h2 class="mb-4 text-center text-danger">Cancel Reservation</h2>
+              <p class="text-center">Are you sure you want to cancel your reservation for <strong>{{ reservation.date }}</strong> with <strong>{{ reservation.guests }}</strong> guests?</p>
+
+              <form action="{% url 'reservations:cancel-reservation' reservation.pk %}" method="POST" class="text-center">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-lg mr-2">Yes, Cancel</button>
+                  <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary btn-lg">No, Go Back</a>
+              </form>
+          </div>
+      </div>
   </div>
 {% endblock %}

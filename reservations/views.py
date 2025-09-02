@@ -257,7 +257,8 @@ def update_reservation(request, pk):
             return redirect_after_reservation(reservation, request.user)
 
     else:
-        form = ReservationForm(instance = reservation, user = request.user)
+        time_slot = list(range(reservation.start_hour.hour, reservation.end_hour.hour)) 
+        form = ReservationForm(instance = reservation, user = request.user, initial = {'time' : time_slot})
 
     return render(request, "reservations/update_reservation.html", {"form": form})
 

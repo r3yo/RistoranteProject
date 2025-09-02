@@ -1,37 +1,43 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Search availability{% endblock %}
+{% block title %}Available Tables{% endblock %}
 
 {% block content %}
-    <h2>Available Tables</h2>
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">Available Tables</h2>
 
-    {% if tables_with_availability %}
-        <!-- Sorting controls -->
-        <div>
-            <button id="sort-table-number">Sort by Table Number</button>
-            <button id="sort-seats">Sort by Seats</button>
-            <button id="sort-slots">Sort by Free Slots</button>
-        </div>
+        {% if tables_with_availability %}
+            <!-- Sorting buttons -->
+            <div class="mb-3 d-flex align-items-center">
+                <span class="mr-2 font-weight-bold">Sort by:</span>
+                <button id="sort-table-number" class="btn btn-outline-primary btn-sm mr-2">Table Number</button>
+                <button id="sort-seats" class="btn btn-outline-primary btn-sm mr-2">Seats</button>
+                <button id="sort-slots" class="btn btn-outline-primary btn-sm">Free Slots</button>
+            </div>
 
-        <ul id = "availability-list">
-            {% for item in tables_with_availability %}
-                <li class = "table-item"
-                    data-table = "{{ item.table.number }}"
-                    data-seats = "{{ item.table.seats }}"
-                    data-slots = "{{ item.hours|length }}">
-                    
-                    <h3>Table {{ item.table.number }} ({{ item.table.seats }} seats)</h3>
-                    
-                    Available hours: <br>
-                    {% for h, label in item.hours %}
-                        {{ label }}{% if not forloop.last %}; {% endif %}
-                    {% endfor %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No available tables</p>
-    {% endif %}
+            <div class="list-group" id="availability-list" style="max-height: 400px; overflow-y: auto;">
+                {% for item in tables_with_availability %}
+                    <div class="list-group-item d-flex flex-column align-items-start mb-2"
+                        data-table="{{ item.table.number }}"
+                        data-seats="{{ item.table.seats }}"
+                        data-slots="{{ item.hours|length }}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">Table {{ item.table.number }} ({{ item.table.seats }} seats)</h5>
+                        </div>
+                        <p class="mb-0">
+                            Available hours: 
+                            {% for h, label in item.hours %}
+                                {{ label }}{% if not forloop.last %}; {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-muted">No available tables</p>
+        {% endif %}
+    </div>
+
     <script src="{% static 'reservations/js/availability_sort.js' %}"></script>
 {% endblock %}

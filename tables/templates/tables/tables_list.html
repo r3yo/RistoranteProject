@@ -1,30 +1,37 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1>All Tables</h1>
+{% block title %}All Tables{% endblock %}
 
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Table Number</th>
-            <th>Seats</th>
-            <th>Active Reservations</th>
-            <th>Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for table in tables %}
-        <tr>
-            <td>{{ table.number }}</td>
-            <td>{{ table.seats }}</td>
-            <td>{{ table.active_reservations.count }}</td>
-            <td><input type = "button" onclick = "window.location.href='{% url 'tables:table-detail' table.pk %}'" value = "Check"></td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="3">No tables found.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <h1 class="mb-4">All Tables</h1>
+            <table class="table table-striped table-hover shadow-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Table Number</th>
+                        <th>Seats</th>
+                        <th>Active Reservations</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for table in tables %}
+                    <tr>
+                        <td>{{ table.number }}</td>
+                        <td>{{ table.seats }}</td>
+                        <td>{{ table.active_reservations.count }}</td>
+                        <td>
+                            <a href="{% url 'tables:table-detail' table.pk %}" class="btn btn-sm btn-info">Check</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No tables found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

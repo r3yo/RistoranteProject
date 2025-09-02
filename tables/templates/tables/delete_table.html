@@ -1,10 +1,19 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 
-{%block content%}
-    <h2>You are trying to delete table: {{table.number}}.</h2>
-    <p>Are you sure you want to proceed? This action cannot be undone.</p>
-    <form method="POST">{%csrf_token%}
-        <input type="submit" value="Delete">
-        <input type="button" onclick="window.location.href='{% url 'tables:table-detail' table.pk %}'" value="Cancel">
-    </form>
-{%endblock%}
+{% block title %}Delete Table{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4 text-center">
+                <h2 class="mb-3">Are you sure?</h2>
+                <p>You are trying to delete table: <strong>{{ table.number }}</strong>. This action cannot be undone.</p>
+                <form method="POST" class="d-flex justify-content-center mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger mr-2">Delete</button>
+                    <a href="{% url 'tables:table-detail' table.pk %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

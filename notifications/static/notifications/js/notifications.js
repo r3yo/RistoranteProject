@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const wrapper = document.getElementById("notif-wrapper");
-    const jsonUrl = wrapper.getAttribute("data-json-url");
-    const markUrl = wrapper.getAttribute("data-mark-url");
+    const wrapper = document.getElementById('notif-wrapper');
+    const jsonUrl = wrapper.getAttribute('data-json-url');
+    const markUrl = wrapper.getAttribute('data-mark-url');
 
     const notifList = document.getElementById("notif-list");
     const unreadCountElem = document.getElementById("unread-count");
@@ -59,11 +59,6 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error("Failed to mark notifications as read:", result);
         }
     }
-
-    // --- Dropdown toggle ---
-    toggleBtn.addEventListener('click', function() {
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    });
 
     // --- Button click for marking all as read ---
     markAllBtn.addEventListener('click', markAllRead);
