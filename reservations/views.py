@@ -146,6 +146,20 @@ class ReservationListView(LoginRequiredMixin, ListView):
             user = self.request.user,
             date__gte = timezone.localdate()
         ).order_by("date", "start_hour")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "title": "My Active Reservations",
+            "heading": "My Active Reservations",
+            "reservations": context['reservations'],
+            "actions": [
+                {"url_name": "reservations:update-reservation", "label": "Edit", "class": "btn-primary mr-1"},
+                {"url_name": "reservations:cancel-reservation", "label": "Cancel", "class": "btn-danger"},
+            ],
+            "empty_message": "You have no reservations."
+        })
+        return context
 
 class ReservationHistoryView(LoginRequiredMixin, ListView):
     model = Reservation
@@ -159,6 +173,17 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
             models.Q(date__lt = timezone.localdate()) |
             models.Q(date = timezone.localdate(), start_hour__lt = timezone.localtime())
         ).order_by("-date", "-start_hour")[:10]
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "title": "Reservation History",
+            "heading": "Reservation History",
+            "reservations": context['reservations'],
+            "actions": None,  # No buttons for history
+            "empty_message": "You have no past reservations."
+        })
+        return context
 
 # Check function for reservation update/cancellation permission
 def is_user_authorized(request, reservation):

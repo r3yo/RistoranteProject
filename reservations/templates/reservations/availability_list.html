@@ -8,15 +8,19 @@
         <h2 class="mb-4 text-center">Available Tables</h2>
 
         {% if tables_with_availability %}
-            <!-- Sorting buttons -->
-            <div class="mb-3 d-flex align-items-center">
-                <span class="mr-2 font-weight-bold">Sort by:</span>
-                <button id="sort-table-number" class="btn btn-outline-primary btn-sm mr-2">Table Number</button>
-                <button id="sort-seats" class="btn btn-outline-primary btn-sm mr-2">Seats</button>
-                <button id="sort-slots" class="btn btn-outline-primary btn-sm">Free Slots</button>
+            <!-- Sorting -->
+            <div class="row g-3 mb-4 justify-content-start">
+                <div class="col-md-3 col-sm-6 ">
+                    <label for="sortTable" class="form-label fw-bold">Sort By:</label>
+                    <select id="sortTable" class="form-select form-select-sm rounded-pill">
+                        <option value="number">Table Number</option>
+                        <option value="seats">Seats</option>
+                        <option value="slots">Free Slots</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="list-group" id="availability-list" style="max-height: 400px; overflow-y: auto;">
+            <div class="list-group" id="availability-list">
                 {% for item in tables_with_availability %}
                     <div class="list-group-item d-flex flex-column align-items-start mb-2"
                         data-table="{{ item.table.number }}"

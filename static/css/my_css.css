@@ -1,27 +1,415 @@
-/* Make all form inputs, textareas, and selects have darker text and borders */
+/* ==========================
+   Palette (CSS Variables)
+========================== */
+:root {
+    --background-color: #1c1c1c;   
+    --primary-color: #8b1e3f;      
+    --secondary-color: #e0c097;    
+    --highlight-color: #e39b26;    
+    --text-color: #f8f8f8;         
+    --border-color: #383838;       
+}
+
+/* ==========================
+   Body & Global Text
+========================== */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Helvetica', sans-serif;
+}
+
+/* ==========================
+   Navbar
+========================== */
+.navbar {
+    background-color: var(--primary-color);
+}
+.navbar-brand, .nav-link {
+    color: var(--secondary-color);
+}
+.navbar-brand:hover, .nav-link:hover {
+    color: var(--highlight-color);
+}
+
+/* Dropdown menu with padding */
+.dropdown-menu {
+    border-radius: 6px;
+    border: 1px solid var(--highlight-color);
+    background-color: var(--primary-color);
+    padding: 0.5rem 0;          
+    margin-top: 8px;             
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Wrap items in a padded container */
+.dropdown-menu .dropdown-item-container {
+    padding: 0 1rem;            
+}
+
+/* Dropdown items */
+.dropdown-menu .dropdown-item {
+    color: #000;
+    border-radius: 4px;
+    margin: 0.2rem 0;           
+}
+
+/* Hover & focus states */
+.dropdown-menu .dropdown-item:hover{
+    background-color: var(--highlight-color);
+}
+
+/* Check availability button */
+.navbar .btn-check-availability {
+    background-color: #ff9f3c;   
+    border-color: var(--highlight-color);
+    color: #a50636;                   
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); 
+}
+
+/* Hover & focus states */
+.navbar .btn-check-availability:hover,
+.navbar .btn-check-availability:focus {
+    background-color: #ff9f3c;
+    border-color: var(--primary-color);
+}
+
+/* ==========================
+   Buttons (Global)
+========================== */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Primary buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #64172e !important;
+    border-color: #3c0f1c !important;
+    color: var(--text-color) !important;
+}
+
+/* Secondary buttons */
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: var(--highlight-color) !important;
+    border-color: var(--highlight-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Danger buttons */
+.btn-danger {
+    background-color: #a93226;
+    border-color: #922b21;
+    color: #fff;
+}
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #922b21;
+    border-color: #641e16;
+}
+
+/* ==========================
+   Notification Button
+========================== */
+#notif-wrapper .btn-primary,
+#notif-wrapper .btn-primary:focus,
+#notif-wrapper .btn-primary:active,
+#notif-wrapper .btn-primary:visited,
+#notif-wrapper .btn-primary.show {  /* when dropdown is open */
+    background-color: #8b1e3f;
+    border-color: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: none;
+}
+
+/* Hover state */
+#notif-wrapper .btn-primary:hover {
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+    color: var(--text-color);
+}
+
+/* Notification dropdown styling */
+#notif-dropdown {
+    width: 300px;            
+    max-height: 400px;      
+    overflow-y: auto;        
+    background-color: hsla(0, 0%, 23%, 0.423);  
+    color: #212529;             
+    border-radius: 1rem;
+}
+
+/* Individual notifications inside the dropdown */
+#notif-dropdown li {
+    background-color: whitesmoke;          
+    color: #212529;                     
+    padding: 0.75rem 1rem;              
+    margin-bottom: 0.5rem;              
+    border-radius: 0.5rem;             
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================
+   Forms
+========================== */
 input.form-control,
 textarea.form-control,
 select.form-control {
-    color: #000;                  /* solid black text */
-    font-weight: 500;               /* slightly bolder for readability */
-    background-color: #fff;       /* white background */
-    border: 1px solid #333;       /* dark border */
-    border-radius: 4px;             /* slightly rounded corners */
-    padding: 0.375rem 0.75rem;      /* keep Bootstrap padding */
+    background-color: #323232;       /* dark card gray */
+    color: var(--text-color);        /* off-white text */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;              /* slightly rounded, matches selects */
+    padding: 0.375rem 0.75rem;       /* left/right spacing */
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* subtle shadow */
 }
 
-/* Styling for options inside the select */
+/* Selected text inside inputs */
+input.form-control::selection,
+textarea.form-control::selection {
+    background-color: var(--highlight-color);
+    color: #000;                  
+}
+
+/* Focus state for inputs */
+input.form-control:focus,
+textarea.form-control:focus {
+    background-color: #323232; /* enforce dark background */
+    color: var(--text-color);  /* enforce off-white text */
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 0.2rem rgba(227, 155, 38, 0.25);
+    outline: none;
+}
+
+/* Placeholder text */
+input.form-control::placeholder,
+textarea.form-control::placeholder {
+    color: #aaa;  /* lighter gray placeholder */
+    opacity: 1;
+}
+
 select.form-control option {
-    color: #000;                  /* black text for normal options */
+    color: var(--text-color);
+}
+
+select.form-control option:disabled {
+    color: #888;
+}
+
+/* Base select style */
+select.form-select {
+    background-color: #323232;       /* dark gray */
+    color: var(--text-color);        /* off-white text */
+    border-radius: 6px;              /* slightly rounded */
+    padding: 0.375rem 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+select.form-select:focus {
+    background-color: #323232;
+    color: var(--text-color);
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 0.2rem rgba(227, 155, 38, 0.25);
+    outline: none;
+}
+
+/* Options inside select */
+select.form-select option,
+select.form-select-sm option {
+    background-color: #323232;       
+    color: var(--text-color);        
+}
+
+/* Style the select box */
+form select {
+    background-color: #323232 !important; /* use !important to override default */
+    color: var(--text-color);
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Keep the style on focus */
+form select:focus {
+    background-color: #323232 !important; /* force the color */
+    border-color: var(--highlight-color) !important;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(227, 155, 38, 0.25) !important;
+}
+
+/* Change color when a choice is selected */
+form select option:checked {
+    background-color: var(--highlight-color);
+    color: #000;
+    border-radius: 0.25rem;
+}
+
+/* ==========================
+   Tables
+========================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+/* Header row */
+table thead th {
+    color: antiquewhite !important;
+    padding: 8px;
+    text-align: center;
+}
+
+/* Table body cells */
+table tbody td {
+    color: antiquewhite;
+    padding: 8px;
+    text-align: center;
+}
+
+/* Alternating row colors */
+table tbody tr:nth-child(even) {
+    background-color: #323232;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #5b5b5b;
+}
+
+/* ==========================
+   Availability list
+========================== */
+#availability-list {
+    max-height: 800px;
+    overflow-y: auto;
+    padding-right: 0.5rem; /* space for scrollbar */
+}
+
+/* Each list item */
+#availability-list .list-group-item {
+    background-color: #e1e1e1;  
+    border: 1px solid #ced4da;  
+    border-radius: 0.25rem;      
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Heading inside each item */
+#availability-list .list-group-item h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: black;
+}
+
+/* Paragraph (available hours) */
+#availability-list .list-group-item p {
+    margin-bottom: 0;
+    color: black;
+    font-size: 0.9rem;
+}
+
+/* ==========================
+   Cards
+========================== */
+.card {
+    background-color: #282828;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+/* Card headings */
+.card h2 {
+    color: var(--secondary-color);
+}
+
+/* ==========================
+   Badges
+========================== */
+.ingredient-badge {
+    background-color: var(--highlight-color);
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Status badges */
+.badge.bg-success {
+    background-color: #4caf50;
+}
+.badge.bg-danger {
+    background-color: #c62828;
+}
+
+/* ==========================
+   Carousel / Images
+========================== */
+.carousel-item img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+}
+
+/* ==========================
+   Sort/Order by
+========================== */
+select.form-select-sm {
+    background-color: #323232;       /* dark card gray */
+    color: var(--text-color);        /* off-white text */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;              /* slightly rounded, not pill */
+    padding: 0.375rem 0.75rem;       /* adds left/right space from edges */
+    font-weight: 500;
+    appearance: none;                /* remove default browser arrow */
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* subtle shadow */
+}
+
+/* Options inside dropdown */
+select.form-select-sm option {
+    background-color: #323232;       /* match select background */
+    color: var(--text-color);
 }
 
 /* Disabled options */
-select.form-control option:disabled {
-    color: #888 !important;       /* gray text */
+select.form-select-sm option:disabled {
+    color: #888;
 }
 
-/* Border styling */
-select.form-control {
-    border: 1px solid #444;       /* darker border */
-    border-radius: 4px;             /* rounded corners */
+/* Hover & focus for the select */
+select.form-select-sm:focus {
+    border-color: var(--highlight-color); /* burnt orange outline */
+    box-shadow: 0 0 0 0.2rem rgba(227, 155, 38, 0.25);
+    outline: none;
+}
+
+/* ==========================
+   Footer
+========================== */
+footer {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 2rem 1rem;
+    text-align: center;
 }

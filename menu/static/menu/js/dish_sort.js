@@ -19,9 +19,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const price = parseFloat(dish.dataset.price) || 0;
 
             const matchesName = name.includes(nameInput.value.toLowerCase());
-            const searchIngredients = ingredientInput.value.toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
 
-            const matchesIngredients = searchIngredients.every(term => ingredients.includes(term));
+            const searchIngredients = ingredientInput.value.toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
+            const ingredientsArray = (dish.dataset.ingredients || "")
+                .toLowerCase()
+                .split(",")
+                .map(s => s.trim());
+            const matchesIngredients = searchIngredients.every(term =>
+                ingredientsArray.some(ing => ing.startsWith(term))
+            );
 
             const minPrice = parseFloat(minPriceInput.value) || 0;
             const maxPrice = parseFloat(maxPriceInput.value) || Infinity;

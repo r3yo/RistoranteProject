@@ -1,6 +1,6 @@
 <div class="dish"
      data-name="{{ dish.name|lower }}"
-     data-ingredients="{{ dish.ingredients.all|default:''|lower }}"
+     data-ingredients="{% for ing in dish.ingredients.all %}{{ ing.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
      data-price="{{ dish.price }}"
      data-available="{{ dish.available }}">
 

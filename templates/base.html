@@ -13,10 +13,10 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
-    <body class="bg-light">
+    <body>
 
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-lg shadow-sm navbar-custom">
             <a class="navbar-brand" href="/">Restaurant</a>
             <!-- Toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
@@ -35,9 +35,11 @@
                             Tables
                             </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarTablesDropdown">
-                                    <a class="dropdown-item" href="{% url 'tables:tables-list' %}">Tables List</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{% url 'tables:add-table' %}">Add New Table</a>
+                                    <div class="dropdown-item-container">
+                                        <a class="dropdown-item" href="{% url 'tables:tables-list' %}">Tables List</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{% url 'tables:add-table' %}">Add New Table</a>
+                                    </div>
                                 </div>
                         </li>
                     {% endif %}
@@ -46,10 +48,12 @@
                         Reservations
                         </a>
                             <div class="dropdown-menu" aria-labelledby="navbarResDropdown">
-                                <a class="dropdown-item" href="{% url 'reservations:user-reservations' %}">My Reservations</a>
-                                <a class="dropdown-item" href="{% url 'reservations:reservations-history' %}">Past Reservations</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'reservations:make-reservation' %}">Make New Reservation</a>
+                                <div class="dropdown-item-container">
+                                    <a class="dropdown-item" href="{% url 'reservations:user-reservations' %}">My Reservations</a>
+                                    <a class="dropdown-item" href="{% url 'reservations:reservations-history' %}">Past Reservations</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url 'reservations:make-reservation' %}">Make New Reservation</a>
+                                </div>
                             </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -57,15 +61,17 @@
                         Menu
                         </a>
                             <div class="dropdown-menu" aria-labelledby="navbarMenuDropdown">
-                                <a class="dropdown-item" href="{% url 'menu:menu-list' %}">Dishes List</a>
-                                {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{% url 'menu:add-dish' %}">Add New Dish</a>
-                                {% endif %}
+                                <div class="dropdown-item-container">
+                                    <a class="dropdown-item" href="{% url 'menu:menu-list' %}">Dishes List</a>
+                                    {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{% url 'menu:add-dish' %}">Add New Dish</a>
+                                    {% endif %}
+                                </div>
                             </div>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-success ml-2" href="{% url 'reservations:availability-check' %}">Check Availability</a>
+                        <a class="btn btn-check-availability ml-2" href="{% url 'reservations:availability-check' %}">Check Availability</a>
                     </li>
                 </ul>
 
@@ -76,13 +82,13 @@
                             <button class="btn btn-primary dropdown-toggle" id="notif-toggle" data-toggle="dropdown">
                                 Notifications (<span id="unread-count">0</span>)
                             </button>
-                            <div id="notif-dropdown" class="dropdown-menu dropdown-menu-right p-2" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <div id="notif-dropdown" class="dropdown-menu dropdown-menu-right p-2">
                                 <ul id="notif-list" class="list-unstyled mb-2"></ul>
-                                <button id="mark-all-read" class="btn btn-sm btn-light btn-block">Mark all read</button>
+                                <button id="mark-all-read" class="btn btn-sm btn-info btn-block">Mark all read</button>
                             </div>
                         </li>
                         {% if user.is_superuser %}
-                            <li class="nav-item mr-2"><a href="{% url 'register-manager' %}" class="btn btn-outline-primary">Register Manager</a></li>
+                            <li class="nav-item mr-2"><a href="{% url 'register-manager' %}" class="btn btn-secondary">Register Manager</a></li>
                         {% endif %}
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}">
@@ -91,7 +97,7 @@
                             </form>
                         </li>
                     {% else %}
-                        <li class="nav-item mr-2"><a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a></li>
+                        <li class="nav-item mr-2"><a href="{% url 'register' %}" class="btn btn-secondary">Register</a></li>
                         <li class="nav-item"><a href="{% url 'login' %}" class="btn btn-primary">Login</a></li>
                     {% endif %}
                 </ul>
@@ -112,9 +118,14 @@
         {% endif %}
 
         <!-- Main content -->
-        <section class="container pt-4">
+        <section class="container py-4">
             {% block content %}{% endblock %}
         </section>
+
+        <!-- Footer -->
+        <footer>
+            &copy; {{ now.year }} Our Restaurant
+        </footer>
 
         {% if user.is_authenticated %}
             <script src="{% static 'notifications/js/notifications.js' %}"></script>
