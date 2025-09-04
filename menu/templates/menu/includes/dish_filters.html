@@ -1,0 +1,43 @@
+<!-- First row: first 4 fields -->
+<div class="row g-2 mb-3">
+    <div class="col-md-3 col-sm-6">
+        <label for="nameFilter" class="form-label fw-bold">Name:</label>
+        <input type="text" id="nameFilter" class="form-control" placeholder="Search by name...">
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <label for="ingredientFilter" class="form-label fw-bold">Ingredient(s):</label>
+        <input type="text" id="ingredientFilter" class="form-control" placeholder="e.g., cheese">
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <label for="minPrice" class="form-label fw-bold">Min Price (€):</label>
+        <input type="number" id="minPrice" class="form-control" placeholder="0" min="0">
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <label for="maxPrice" class="form-label fw-bold">Max Price (€):</label>
+        <input type="number" id="maxPrice" class="form-control" placeholder="100" min="0">
+    </div>
+</div>
+
+<!-- Second row: nicely centered sort & availability filters -->
+<div class="row g-3 mb-4 justify-content-center">
+    <div class="col-md-3 col-sm-6">
+        <label for="sortBy" class="form-label fw-bold">Sort By:</label>
+        <select id="sortBy" class="form-select form-select-sm rounded-pill">
+            <option value="name" selected>Name (A–Z)</option>
+            <option value="price">Price (Low → High)</option>
+            <option value="ingredients">Ingredients (A–Z)</option>
+        </select>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <label for="availabilityFilter" class="form-label fw-bold">Availability:</label>
+        <select id="availabilityFilter" class="form-select form-select-sm rounded-pill">
+            <option value="all" selected>All</option>
+            <option value="available">Available Only</option>
+            <option value="unavailable">Sold Out Only</option>
+        </select>
+    </div>
+</div>

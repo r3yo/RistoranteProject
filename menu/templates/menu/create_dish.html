@@ -1,9 +1,6 @@
-{%extends "base.html"%}
+{% extends "menu/base_dish_form.html" %}
 
-{%block content%}
-    <h1>Add new dish</h1>
-    <form method="POST" enctype = "multipart/form-data">{% csrf_token %}
-        {{form.as_p}}
-        <input type = "submit" value = "Create">
-    </form>
-{%endblock%}
+{% block title %}Add New Dish{% endblock %}
+{% block heading %}Add New Dish{% endblock %}
+{% block submit_text %}Create{% endblock %}
+{% block submit_class %}btn-success{% endblock %}

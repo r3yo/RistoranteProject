@@ -1,9 +1,6 @@
-{% extends "base.html" %}
+{% extends "menu/base_dish_form.html" %}
 
-{%block content%}
-    <h1>Updating dish: {{dish.name}}</h1>
-    <form method="POST" enctype = "multipart/form-data">{%csrf_token%}
-        {{form.as_p}}
-        <input type = "submit" value = "Update">
-        <input type = "button" onclick = "window.location.href='{% url 'menu:dish-detail' dish.pk %}'" value = "Cancel">
-{%endblock%}
+{% block title %}Update Dish{% endblock %}
+{% block heading %}Update Dish{% endblock %}
+{% block submit_text %}Save Changes{% endblock %}
+{% block submit_class %}btn-warning{% endblock %}

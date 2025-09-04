@@ -1,27 +1,53 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 
-{%block content%}
-    <h1>{{dish.name}}</h1>
-    <p>Category: {{dish.category}}</p>
-    <p>Price: {{dish.price}} Euro</p>
-    <p>Ingredients:
-        {% for ingredient in dish.ingredients.all %}
-            <p>{{ ingredient }}</p>
-        {% endfor %}
-    </p>
-    <p>Status: 
-        {%if dish.available%}
-            Available
-        {%else%}
-            Sold out
-        {%endif%}
-    </p>
-    {% if dish.img %}
-        <img src = "{{ dish.img.url }}" alt = "{{ dish.name }}" style = "max-width:300px;">
-    {% endif %}
-    <a href="{% url "menu:menu-list" %}">Back to menu</a>
-    {% if user.is_staff or "Managers" in user.groups.all.0.name %}
-        <input type="button" onclick = "window.location.href='{% url 'menu:delete-dish' dish.pk %}'" value="Delete">
-        <input type="button" onclick = "window.location.href='{% url 'menu:update-dish' dish.pk %}'" value="Update">
-    {% endif %}
-{%endblock%}
+{% block title %}{{ dish.name }}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="card shadow-sm rounded-3 p-4" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2);">
+                <div class="row g-4">
+                    
+                    <!-- Dish Image -->
+                    {% if dish.img %}
+                    <div class="col-md-5">
+                        <img src="{{ dish.img.url }}" alt="{{ dish.name }}" class="img-fluid rounded-3" style="width:100%; max-height:450px; object-fit:cover;">
+                    </div>
+                    {% endif %}
+
+                    <!-- Dish Attributes -->
+                    <div class="col-md-7 d-flex flex-column justify-content-center">
+                        <h2 class="mb-3">{{ dish.name }}</h2>
+                        <p><strong>Category:</strong> {{ dish.category }}</p>
+                        <p><strong>Price:</strong> {{ dish.price }} €</p>
+
+                        <p><strong>Ingredients:</strong></p>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            {% for ingredient in dish.ingredients.all %}
+                                <span class="badge bg-info text-dark mr-1 mb-1">{{ ingredient }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <p>
+                            <strong>Status:</strong>
+                            {% if dish.available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Sold Out</span>
+                            {% endif %}
+                        </p>
+
+                        <div class="mt-3 d-flex gap-2">
+                            <a href="{% url 'menu:menu-list' %}" class="btn btn-secondary mr-2">Back to Menu</a>
+                            {% if user.is_staff or "Managers" in user.groups.all.0.name %}
+                                <a href="{% url 'menu:update-dish' dish.pk %}" class="btn btn-primary mr-2">Update</a>
+                                <a href="{% url 'menu:delete-dish' dish.pk %}" class="btn btn-danger">Delete</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

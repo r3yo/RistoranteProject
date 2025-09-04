@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpResponseForbidden
 from django.shortcuts import *
 from django.views.generic import *
 from django.shortcuts import *
@@ -76,7 +75,6 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     form_class = ReservationForm
     template_name = 'reservations/make_reservation.html'
     login_url = '/login-or-register/'
-    success_url = reverse_lazy('tables:user-reservations')
 
     def get_form_class(self):
         if self.request.user.groups.filter(name = "Managers").exists() or self.request.user.is_staff:
@@ -100,19 +98,18 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
 
         if table:
             # Table available --> save reservation
-            form.save()
+            self.object = form.save()
             messages.success(self.request, "Reservation created successfully.")
             send_notification(
                 user = user,
                 message = f"Reservation created successfully for {form.cleaned_data["guests"]} on {form.cleaned_data["date"]} at {dict(Table.HOURS_CHOICES).get(int(form.cleaned_data["time"][0]))}.",
                 notif_type = 'CONFIRM'
             )
-            return super().form_valid(form)
         
         elif join_waitlist:
             # No table --> add to waitlist
             added = add_to_waitlist(
-                self.request.user,
+                user,
                 form.cleaned_data["date"],
                 form.cleaned_data["start_hour"],
                 form.cleaned_data["end_hour"],
@@ -121,31 +118,23 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
             if added:
                 messages.success(self.request, "No table available. You've been added to the waitlist.")
             else:
-                messages.warning(self.request, "You have already been added to this waitlist.")
-        
-            return redirect(self.success_url)
+                messages.error(self.request, "You have already been added to this waitlist.")
+            
+            return redirect("home")
+
         else:
             # No table and user didn't join waitlist
-            form.add_error(None, "No table available and you did not join the waitlist.")
+            messages.warning(self.request, "No table available and you did not join the waitlist.")
             return self.form_invalid(form)
+        
+        return super().form_valid(form)
         
     def get_success_url(self):
         # If the reservation user is the same as the logged-in user
         if self.object.user == self.request.user:
             return reverse_lazy("reservations:user-reservations")
         else:
-            return reverse_lazy("tables:table-detail", kwargs = {'pk' : self.object.table.slug})
-        
-    def form_invalid(self, form):
-    # Called if form.is_valid() fails
-        for field, errors in form.errors.items():
-            for error in errors:
-                if field == "__all__":
-                    messages.error(self.request, error)
-                else:
-                    messages.error(self.request, f"{field}: {error}")
-
-        return super().form_invalid(form)
+            return reverse_lazy("tables:tables-list")
 
 class ReservationListView(LoginRequiredMixin, ListView):
     model = Reservation
@@ -173,7 +162,7 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
 
 # Check function for reservation update/cancellation permission
 def is_user_authorized(request, reservation):
-    return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
+    return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists() or request.user.is_superuser
 
 def redirect_after_reservation(reservation, user):
     """
@@ -183,15 +172,21 @@ def redirect_after_reservation(reservation, user):
     """
     if reservation.user == user:
         return redirect("reservations:user-reservations")
-    else:
+    
+    elif user.groups.filter(name = "Managers").exists() or user.is_superuser:
         return redirect("tables:table-detail", pk = reservation.table.slug)
+    
+    else:
+        return redirect("home")
 
 @login_required
 def cancel_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 
     if not is_user_authorized(request, reservation):
-        return HttpResponseForbidden("You don't have permission to cancel this reservation.")
+        messages.error(request, "You don't have permissions to delete this reservation.")
+        
+        return redirect_after_reservation(reservation, request.user)
 
     if request.method == "POST":
         # Delete the reservation and redirect
@@ -206,7 +201,9 @@ def update_reservation(request, pk):
     reservation = get_object_or_404(Reservation, slug = pk)
 
     if not is_user_authorized(request, reservation):
-        return HttpResponseForbidden("You don't have permission to update this reservation.")
+        messages.error(request, "You don't have permissions to update this reservation.")
+        
+        return redirect_after_reservation(reservation, request.user)
 
     if request.method == "POST":
         form = ReservationForm(request.POST, instance = reservation, user = request.user)
@@ -246,14 +243,6 @@ def update_reservation(request, pk):
             return redirect_after_reservation(reservation, request.user)
 
         else:
-            # Show form errors
-            for field, errors in form.errors.items():
-                for error in errors:
-                    if field == "__all__":
-                        messages.error(request, error)
-                    else:
-                        messages.error(request, f"{field}: {error}")
-
             return redirect_after_reservation(reservation, request.user)
 
     else:

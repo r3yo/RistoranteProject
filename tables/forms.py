@@ -5,6 +5,8 @@ from django.utils import timezone
 class TableForm(forms.ModelForm):
 
     seats = forms.IntegerField(min_value = 1)
+
+    number = forms.IntegerField(min_value = 1)
    
     class Meta:
         model = Table

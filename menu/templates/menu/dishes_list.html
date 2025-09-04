@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-
-{%block content%}
-    <h1>Results:</h1>
-    {% for dish in dishes %}
-        <h3>{{ dish }}</h3>
-            <p>{{ dish.description }}</p>
-    {% endfor %}
-{% endblock %}

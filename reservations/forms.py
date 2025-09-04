@@ -50,20 +50,18 @@ class ReservationForm(forms.ModelForm):
 
         return time(hour = selected_hours[0]), time(hour = selected_hours[-1] + 1)
 
-    """
-    Returns a valid table for the given time and guests.
-    - If updating: checks current table for conflicts.
-    - If creating: finds first free table.
-    Raises ValidationError if no table is available.
-    """
-
-    def _get_valid_table(self, guests, date, start, end):
+    def _get_valid_table(self, user, guests, date, start, end):
         """
         Find the first available table that fits the number of guests
         and is free during the requested time.
         Raises ValidationError if no table is available.
         """
         
+        # If a client reserves, user will be None and its value will be the kwargs["user"] value, otherwise it will be the user value selected by the manager. This check is needed for consistency between errors
+
+        if user == None:
+            user = self._user
+
         my_table = None
 
         for table in Table.objects.filter(seats = guests).order_by('seats', 'number'):
@@ -72,7 +70,7 @@ class ReservationForm(forms.ModelForm):
             if self.instance.pk:
                 conflicts = conflicts.exclude(pk = self.instance.pk)
             
-            if conflicts.filter(user = self._user).exists():
+            if conflicts.filter(user = user).exists():
                 raise forms.ValidationError("You already have a reservation during this time.")
 
             if not conflicts.exists():
@@ -88,7 +86,7 @@ class ReservationForm(forms.ModelForm):
         cleaned_data["start_hour"] = start
         cleaned_data["end_hour"] = end
 
-        table = self._get_valid_table(cleaned_data["guests"], cleaned_data["date"], start, end)
+        table = self._get_valid_table(cleaned_data.get("user"), cleaned_data["guests"], cleaned_data["date"], start, end)   # cleaned_data.get("attr") returns the attr value if present, None otherwise
         cleaned_data["table"] = table  # could be None if no table available
 
         return cleaned_data

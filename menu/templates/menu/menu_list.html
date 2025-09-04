@@ -1,24 +1,29 @@
 {% extends "base.html" %}
+{% load static %}
 
-{%block title%}MENU{% endblock %}
+{% block title %}Menu{% endblock %}
 
-{%block content%}
-    {% for category in categories %}
-        <h2>{{ category }}</h2>
-        <ul>
-            {% for dish in category.dishes.all %}
-                <li>
-                    <a href="{% url 'menu:dish-detail' dish.pk %}"><strong>{{ dish.name }}</strong> </a> - {{ dish.price }}€
-                    {% if dish.description %}<br>{{ dish.description }}{% endif %}
-                </li>
-                {% if dish.img %}
-                    <img src = "{{ dish.img.url }}" alt = "{{ dish.name }}" style="max-width:300px;">
-                {% endif %}
-            {% empty %}
-                <li>No items in this category yet.</li>
-            {% endfor %}
-        </ul>
-    {% empty %}
-        <p>No menu categories found.</p>
-    {% endfor %}
-{%endblock%}
+{% block content %}
+    <div class="container mt-4">
+
+        <h1 class="mb-4">Menu</h1>
+
+        {% include "menu/includes/dish_filters.html" %}
+
+        {% for category in categories %}
+            <h2 class="mt-4">{{ category }}</h2>
+
+            <div class="dishes-container">
+                {% for dish in category.dishes.all %}
+                    {% include "menu/includes/base_dish_row.html" with dish=dish forloop=forloop %}
+                {% empty %}
+                    <p>No dishes in this category yet.</p>
+                {% endfor %}
+            </div>
+        {% empty %}
+            <p>No menu categories found.</p>
+        {% endfor %}
+    </div>
+
+    <script src="{% static 'menu/js/dish_sort.js' %}"></script>
+{% endblock %}
