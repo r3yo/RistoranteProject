@@ -17,7 +17,7 @@
 
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg shadow-sm navbar-custom">
-            <a class="navbar-brand" href="/">Restaurant</a>
+            <a class="navbar-brand" href="/">Boulevard</a>
             <!-- Toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
                     aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,7 +29,7 @@
 
                 <!-- Page links + Check Availability button -->
                 <ul class="navbar-nav mr-auto">
-                    {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
+                    {% if "Manager" in user.groups.all.0.name%}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarTablesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Tables
@@ -63,7 +63,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarMenuDropdown">
                                 <div class="dropdown-item-container">
                                     <a class="dropdown-item" href="{% url 'menu:menu-list' %}">Dishes List</a>
-                                    {% if "Manager" in user.groups.all.0.name or user.is_superuser %}
+                                    {% if "Manager" in user.groups.all.0.name%}
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="{% url 'menu:add-dish' %}">Add New Dish</a>
                                     {% endif %}

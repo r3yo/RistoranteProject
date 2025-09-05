@@ -14,3 +14,8 @@ application = ProtocolTypeRouter({
         )
     ),
 })
+
+
+# Start periodic cleanup once at server start
+from ristorante import initcmds
+initcmds.start_periodic_cleanup()

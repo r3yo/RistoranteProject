@@ -77,7 +77,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
 
     def get_form_class(self):
-        if self.request.user.groups.filter(name = "Managers").exists() or self.request.user.is_staff:
+        if self.request.user.groups.filter(name = "Managers").exists():
             return ManagerReservationForm
         return ReservationForm
 
@@ -91,7 +91,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
         table = form.cleaned_data["table"]
         join_waitlist = form.cleaned_data["join_waitlist"]
         
-        if self.request.user.groups.filter(name = "Managers").exists() or self.request.user.is_superuser:
+        if self.request.user.groups.filter(name = "Managers").exists():
             user = form.cleaned_data["user"]
         else:
             user = self.request.user
@@ -187,7 +187,7 @@ class ReservationHistoryView(LoginRequiredMixin, ListView):
 
 # Check function for reservation update/cancellation permission
 def is_user_authorized(request, reservation):
-    return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists() or request.user.is_superuser
+    return reservation.user == request.user or request.user.groups.filter(name = "Managers").exists()
 
 def redirect_after_reservation(reservation, user):
     """
@@ -198,7 +198,7 @@ def redirect_after_reservation(reservation, user):
     if reservation.user == user:
         return redirect("reservations:user-reservations")
     
-    elif user.groups.filter(name = "Managers").exists() or user.is_superuser:
+    elif user.groups.filter(name = "Managers").exists():
         return redirect("tables:table-detail", pk = reservation.table.slug)
     
     else:
