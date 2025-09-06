@@ -54,7 +54,7 @@
                                         <span class="badge bg-info text-dark me-1">{{ ingredient }}</span>
                                     {% endfor %}
                                     {% if dish.ingredients.all|length > 3 %}
-                                        <span class="badge bg-secondary text-dark">
+                                        <span class="badge bg-secondary text-light">
                                             +{{ dish.ingredients.all|length|add:"-3" }} more
                                         </span>
                                     {% endif %}
