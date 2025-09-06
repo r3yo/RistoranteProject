@@ -65,7 +65,10 @@
                                     <a class="dropdown-item" href="{% url 'menu:menu-list' %}">Dishes List</a>
                                     {% if "Manager" in user.groups.all.0.name%}
                                         <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{% url 'menu:add-category' %}">Add New Category</a>
                                         <a class="dropdown-item" href="{% url 'menu:add-dish' %}">Add New Dish</a>
+                                        <a class="dropdown-item" href="{% url 'menu:ingredients-list' %}">Ingredients List</a>
+                                        <a class="dropdown-item" href="{% url 'menu:add-ingredient' %}">Add New Ingredient</a>
                                     {% endif %}
                                 </div>
                             </div>

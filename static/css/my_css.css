@@ -115,7 +115,7 @@ body {
 /* Danger buttons */
 .btn-danger {
     background-color: #a93226;
-    border-color: #922b21;
+    border-color: #a93226;
     color: #fff;
 }
 .btn-danger:hover,

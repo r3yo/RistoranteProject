@@ -4,41 +4,85 @@
      data-price="{{ dish.price }}"
      data-available="{{ dish.available }}">
 
-    <div class="row align-items-center mb-4 {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
+    <div class="row align-items-center
+        {% if allow_realign|default:False and forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
 
         <!-- Dish Image -->
         {% if dish.img %}
         <div class="col-md-5 d-flex justify-content-center">
-            <div style="width:200px; height:200px; overflow:hidden; border-radius:50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                <img src="{{ dish.img.url }}" alt="{{ dish.name }}" class="img-fluid" style="width:100%; height:100%; object-fit:cover;">
-            </div>
+            {% if style == "list" %}
+                <div style="width:200px; height:200px; overflow:hidden; border-radius:50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <img src="{{ dish.img.url }}" alt="{{ dish.name }}" class="img-fluid" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+            {% else %}
+                <img src="{{ dish.img.url }}" alt="{{ dish.name }}" class="img-fluid rounded-3" style="width:100%; max-height:450px; object-fit:cover;">
+            {% endif %}
         </div>
         {% endif %}
 
         <!-- Dish Attributes -->
-        <div class="col-md-7 d-flex flex-column justify-content-center text-center">
-            <div class="p-2">
-                <h4 class="mb-2">{{ dish.name }}</h4>
-                {% if dish.description %}
-                    <p class="mb-1">{{ dish.description }}</p>
-                {% endif %}
-                {% if dish.ingredients %}
-                    <p class="mb-1"><strong>Ingredients:</strong>
-                        {% for ingredient in dish.ingredients.all %}
-                            <span class="badge bg-info text-dark me-1">{{ ingredient.name }}</span>
-                        {% empty %}None{% endfor %}
-                    </p>
-                {% endif %}
-                <p class="mb-1"><strong>Price:</strong> {{ dish.price }} €</p>
-                <p class="mb-1">
-                    {% if dish.available %}
-                        <span class="badge bg-success">Available</span>
-                    {% else %}
-                        <span class="badge bg-danger">Sold Out</span>
+        {% if style == "list" %}
+            <div class="col-md-7 d-flex flex-column justify-content-center text-center">
+        {% else %}
+            <div class="col-md-7 d-flex flex-column justify-content-center">
+        {% endif %}
+                <div class="p-2">
+                    <h2 class="mb-3">{{ dish.name }}</h2>
+
+                    {% if category %}
+                        <p><strong>Category:</strong> {{ category }}</p>
                     {% endif %}
-                </p>
-                <a href="{% url 'menu:dish-detail' dish.pk %}" class="btn btn-warning btn-sm mt-2">View</a>
-            </div>
+
+                    {% if show_description and dish.description %}
+                        <p class="mb-4">{{ dish.description }}</p>
+                    {% endif %}
+
+                    {% if dish.ingredients %}
+                        {% if style == "detail" %}
+                        <!-- Left-aligned flex-wrap for detail page -->
+                        <p class="mb-4">
+                            <strong>Ingredients:</strong>
+                            {% for ingredient in dish.ingredients.all %}
+                                <span class="badge bg-info text-dark me-1">{{ ingredient }}</span>
+                            {% endfor %}
+                        </p>
+                        {% else %}
+                            <!-- List view: inline badges -->
+                            <p class="mb-1"><strong>Ingredients:</strong></p>
+                                <p>
+                                    {% for ingredient in dish.ingredients.all|slice:":3" %}
+                                        <span class="badge bg-info text-dark me-1">{{ ingredient }}</span>
+                                    {% endfor %}
+                                    {% if dish.ingredients.all|length > 3 %}
+                                        <span class="badge bg-secondary text-dark">
+                                            +{{ dish.ingredients.all|length|add:"-3" }} more
+                                        </span>
+                                    {% endif %}
+                                </p>
+                        {% endif %}
+                    {% endif %}
+
+                    <p><strong>Price:</strong> {{ dish.price }} €</p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        {% if dish.available %}
+                            <span class="badge bg-success text-dark">Available</span>
+                        {% else %}
+                            <span class="badge bg-danger text-dark">Sold Out</span>
+                        {% endif %}
+                    </p>
+
+                    {% if show_view_button %}
+                        <a href="{% url 'menu:dish-detail' dish.pk %}" class="btn btn-warning btn-sm mt-2">View</a>
+                    {% endif %}
+                    {% if style == "detail" and "Managers" in user.groups.all.0.name %}
+                        <div class="justify-content-end text-right">
+                            <a href="{% url 'menu:update-dish' dish.pk %}" class="btn btn-primary me-1">Update</a>
+                            <a href="{% url 'menu:delete-dish' dish.pk %}" class="btn btn-danger">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
         </div>
     </div>
 </div>

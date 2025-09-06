@@ -6,48 +6,13 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-10">
             <div class="card shadow-sm rounded-3 p-4">
-                <div class="row g-4">
-                    
-                    <!-- Dish Image -->
-                    {% if dish.img %}
-                    <div class="col-md-5">
-                        <img src="{{ dish.img.url }}" alt="{{ dish.name }}" class="img-fluid rounded-3" style="width:100%; max-height:450px; object-fit:cover;">
-                    </div>
-                    {% endif %}
-
-                    <!-- Dish Attributes -->
-                    <div class="col-md-7 d-flex flex-column justify-content-center">
-                        <h2 class="mb-3">{{ dish.name }}</h2>
-                        <p><strong>Category:</strong> {{ dish.category }}</p>
-                        <p><strong>Price:</strong> {{ dish.price }} €</p>
-
-                        <p><strong>Ingredients:</strong></p>
-                        <div class="d-flex flex-wrap gap-2 mb-3">
-                            {% for ingredient in dish.ingredients.all %}
-                                <span class="badge bg-info text-dark mr-1 mb-1">{{ ingredient }}</span>
-                            {% endfor %}
-                        </div>
-
-                        <p>
-                            <strong>Status:</strong>
-                            {% if dish.available %}
-                                <span class="badge bg-success">Available</span>
-                            {% else %}
-                                <span class="badge bg-danger">Sold Out</span>
-                            {% endif %}
-                        </p>
-
-                        <div class="mt-3 d-flex gap-2">
-                            <a href="{% url 'menu:menu-list' %}" class="btn btn-secondary mr-2">Back to Menu</a>
-                            {% if "Managers" in user.groups.all.0.name %}
-                                <a href="{% url 'menu:update-dish' dish.pk %}" class="btn btn-primary mr-2">Update</a>
-                                <a href="{% url 'menu:delete-dish' dish.pk %}" class="btn btn-danger">Delete</a>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                </div>
+                {% include "menu/includes/base_dish_row.html" with dish=dish show_description=True allow_realign=False show_view_button=False style="detail" category=dish.category %}
             </div>
+
+            <div class="mt-3 d-flex gap-2">
+                <a href="{% url 'menu:menu-list' %}" class="btn btn-secondary">Back to Menu</a>
+            </div>
+            
         </div>
     </div>
 {% endblock %}

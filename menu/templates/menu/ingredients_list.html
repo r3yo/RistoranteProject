@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Ingredients{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Ingredients</h2>
+    </div>
+
+    <div class="row">
+        {% for ingredient in ingredients %}
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3 h-100 text-center">
+                <h5 class="card-title">{{ ingredient.name }}</h5>
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <a href="{% url 'menu:update-ingredient' ingredient.pk %}" class="btn btn-primary btn-sm mr-2">Edit</a>
+                    <a href="{% url 'menu:delete-ingredient' ingredient.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p>No ingredients available.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
