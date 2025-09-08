@@ -33,7 +33,7 @@ body {
 }
 
 .d-flex h3 {
-    color: #000;
+    color: var(--highlight-color);
     font-weight: bold;
 }
 
