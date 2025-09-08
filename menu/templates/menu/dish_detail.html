@@ -6,7 +6,16 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-10">
             <div class="card shadow-sm rounded-3 p-4">
-                {% include "menu/includes/base_dish_row.html" with dish=dish show_description=True allow_realign=False show_view_button=False style="detail" category=dish.category %}
+                    <div class="dish"
+                        data-name="{{ dish.name|lower }}"
+                        data-ingredients="{% for ing in dish.ingredients.all %}{{ ing.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+                        data-price="{{ dish.price }}"
+                        data-available="{{ dish.available }}">
+
+                        <div class="row align-items-center">
+                            {% include "menu/includes/base_dish_row.html" with dish=dish show_description=True show_view_button=False style="detail" category=dish.category %}
+                        </div>
+                    </div>
             </div>
 
             <div class="mt-3 d-flex gap-2">

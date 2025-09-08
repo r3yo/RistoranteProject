@@ -23,6 +23,9 @@ class Category(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length = 100, unique = True)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
+    
+    class Meta:
+        ordering = ["name"]  # alphabetical
 
     def save(self, *args, **kwargs):
         # Normalize casing and collapse spacing

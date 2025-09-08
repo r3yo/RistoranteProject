@@ -38,7 +38,6 @@ class IngredientListView(ListView):
     model = Ingredient
     template_name = "menu/ingredients_list.html"
     context_object_name = "ingredients"
-    ordering = ["name"]  # alphabetical
 
 # Create Category
 class CategoryCreateView(CreateView):

@@ -8,7 +8,7 @@ class IngredientForm(forms.ModelForm):
 
     def clean_name(self):
         name = re.sub(r"\s+", " ", self.cleaned_data['name']).strip().title()
-        if Ingredient.objects.filter(name=name).exists():
+        if Ingredient.objects.filter(name=name).exclude(pk = self.instance.pk).exists():
             raise forms.ValidationError("An ingredient with this name already exists.")
         
         return name
@@ -20,7 +20,7 @@ class CategoryForm(forms.ModelForm):
     
     def clean_name(self):
         name = re.sub(r"\s+", " ", self.cleaned_data['name']).strip().title()
-        if Ingredient.objects.filter(name=name).exists():
+        if Category.objects.filter(name=name).exclude(pk = self.instance.pk).exists():
             raise forms.ValidationError("A category with this name already exists.")
         
         return name
@@ -41,11 +41,11 @@ class DishForm(forms.ModelForm):
 
     class Meta:
         model = Dish
-        fields = ["category", "name", "price", "ingredients", "available", "img"]
+        fields = ["category", "name", "price", "ingredients", "available", "description", "img"]
     
     def clean_name(self):
         name = re.sub(r"\s+", " ", self.cleaned_data['name']).strip().title()
-        if Dish.objects.filter(name=name).exists():
+        if Dish.objects.filter(name=name).exclude(pk = self.instance.pk).exists():
             raise forms.ValidationError("A dish with this name already exists.")
         
         return name

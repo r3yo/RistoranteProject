@@ -9,6 +9,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const containers = document.querySelectorAll(".dishes-container");
     if (!containers.length) return;
 
+    function applyGlobalStagger() {
+        // Get all visible dishes across the entire page
+        const visibleDishes = Array.from(document.querySelectorAll(".dish")).filter(d => d.style.display !== "none");
+
+        visibleDishes.forEach((dish, index) => {
+            const row = dish.querySelector(".row");
+            if (!row) return;
+
+            if ((index + 1) % 2 === 0) {
+                row.classList.add("flex-row-reverse");
+            } else {
+                row.classList.remove("flex-row-reverse");
+            }
+        });
+    }
+
     function updateContainer(container) {
         let dishes = Array.from(container.querySelectorAll(".dish"));
 
@@ -26,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .split(",")
                 .map(s => s.trim());
             const matchesIngredients = searchIngredients.every(term =>
-                ingredientsArray.some(ing => ing.startsWith(term))
+                ingredientsArray.some(ing => ing.includes(term))
             );
 
             const minPrice = parseFloat(minPriceInput.value) || 0;
@@ -56,18 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             visibleDishes.forEach(dish => container.appendChild(dish));
         }
-
-        // Reapply stagger
-        visibleDishes.forEach((dish, index) => {
-            const row = dish.querySelector(".row");
-            if (!row) return;
-
-            if ((index + 1) % 2 === 0) {
-                row.classList.add("flex-row-reverse");
-            } else {
-                row.classList.remove("flex-row-reverse");
-            }
-        });
+        
+        // Global stagger
+        applyGlobalStagger();
     }
 
     [nameInput, ingredientInput, minPriceInput, maxPriceInput, sortSelect, availabilitySelect].forEach(input => {

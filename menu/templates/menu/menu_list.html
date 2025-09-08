@@ -10,26 +10,35 @@
 
         {% include "menu/includes/dish_filters.html" %}
 
-        {% for category in categories %}
-            <div class="d-flex align-items-center mt-4">
-                <h2 class="me-3 mb-0">{{ category }}</h2>
-                {% if "Managers" in user.groups.all.0.name %}
-                    <a href="{% url 'menu:update-category' category.pk %}" class="btn btn-primary btn-sm ml-2 mr-2">Edit</a>
-                    <a href="{% url 'menu:delete-category' category.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                {% endif %}
-            </div>
-            <div class="dishes-container">
-                {% for dish in category.dishes.all %}
-                    {% include "menu/includes/base_dish_row.html" with dish=dish show_description=False allow_realign=True show_view_button=True style="list" forloop=forloop %}
-                {% empty %}
-                    <p>No dishes in this category yet.</p>
-                {% endfor %}
-            </div>
+            {% for category in categories %}
+                <div class="d-flex justify-content-center align-items-center mt-4 mb-5 gap-2">
+                    <h2 class="mb-0">{{ category }}</h2>
+                    {% if "Managers" in user.groups.all.0.name %}
+                        <a href="{% url 'menu:update-category' category.pk %}" class="btn btn-primary btn-sm ml-2 mr-2">Edit</a>
+                        <a href="{% url 'menu:delete-category' category.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    {% endif %}
+                </div>
+                <div class="dishes-container">
+                    {% for dish in category.dishes.all %}
+                        <div class="dish"
+                            data-name="{{ dish.name|lower }}"
+                            data-ingredients="{% for ing in dish.ingredients.all %}{{ ing.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+                            data-price="{{ dish.price }}"
+                            data-available="{{ dish.available }}">
+
+                            <div class="row align-items-center">
+                                {% include "menu/includes/base_dish_row.html" with dish=dish show_description=False show_view_button=True style="list" %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No dishes in this category yet.</p>
+                    {% endfor %}
+                </div>
 
 
-        {% empty %}
-            <p>No menu categories found.</p>
-        {% endfor %}
+            {% empty %}
+                <p>No menu categories found.</p>
+            {% endfor %}
     </div>
 
     <script src="{% static 'menu/js/dish_sort.js' %}"></script>

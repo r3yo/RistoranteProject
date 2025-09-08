@@ -2,7 +2,7 @@
    Palette (CSS Variables)
 ========================== */
 :root {
-    --background-color: #1c1c1c;   
+    --background-color: #222222;   
     --primary-color: #8b1e3f;      
     --secondary-color: #e0c097;    
     --highlight-color: #e39b26;    
@@ -17,6 +17,28 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     font-family: 'Papyrus', sans-serif;
+}
+
+/* ==========================
+   Titles & Attributes (Menu)
+========================== */
+.container h1 {
+    color: var(--highlight-color);
+    font-weight: bolder;
+}
+
+.d-flex h2 {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.d-flex h3 {
+    color: #000;
+    font-weight: bold;
+}
+
+p strong {
+    color: rgba(255, 255, 255, 0.53);
 }
 
 /* ==========================

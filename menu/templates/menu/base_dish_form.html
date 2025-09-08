@@ -13,7 +13,7 @@
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-flex justify-content-center gap-2 mt-3">
-                        <button type="submit" class="btn {% block submit_class %}{% endblock %}">
+                        <button type="submit" class="btn {% block submit_class %}{% endblock %} mr-2">
                             {% block submit_text %}{% endblock %}
                         </button>
                         <a href="{% url 'menu:menu-list' %}" class="btn btn-secondary">Cancel</a>

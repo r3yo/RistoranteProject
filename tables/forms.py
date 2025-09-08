@@ -12,11 +12,14 @@ class TableForm(forms.ModelForm):
         model = Table
         fields = ['number', 'seats']
     
-    def clean_seats(self):
+    def clean_number(self):
         number = self.cleaned_data['number']
-        if Table.objects.filter(number=number).exists():
+        if Table.objects.filter(number=number).exclude(pk = self.instance.pk).exists():
             raise forms.ValidationError("A table with this number already exists.")
         
+        return number
+    
+    def clean_seats(self):
         seats = self.cleaned_data['seats']
         table = self.instance  # the Table being updated
         # flat = True returns a flat list of values instead of tuples
