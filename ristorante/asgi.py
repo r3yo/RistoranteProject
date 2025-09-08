@@ -2,7 +2,6 @@ import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from django.core.asgi import get_asgi_application
-from ristorante import initcmds
 import notifications.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ristorante.settings")
@@ -18,4 +17,5 @@ application = ProtocolTypeRouter({
 
 
 # Start periodic cleanup once at server start
+from ristorante import initcmds
 initcmds.start_periodic_cleanup()
