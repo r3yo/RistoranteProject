@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import *
 from django.views.generic import *
 from django.shortcuts import *
@@ -9,6 +10,18 @@ from braces.views import GroupRequiredMixin
 from .models import *
 from .forms import *
 # Create your views here.
+
+class GroupRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, "You need to log in to access this page.")
+            return redirect("login")
+
+        if not request.user.groups.filter(name__in=self.group_required).exists():
+            messages.warning(request, "You don’t have permission to access this page.")
+            return redirect("home")
+
+        return super().dispatch(request, *args, **kwargs)
 
 class CreateTableView(GroupRequiredMixin, CreateView):
     group_required = ["Managers"]

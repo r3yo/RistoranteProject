@@ -192,8 +192,8 @@ def is_user_authorized(request, reservation):
 def redirect_after_reservation(reservation, user):
     """
     Redirects based on whether the reservation belongs to the current user.
-    - If the reservation is for the user → redirect to user's reservations
-    - Otherwise → redirect to the table detail page
+    - If the reservation is for the user --> redirect to user's reservations
+    - Otherwise --> redirect to the table detail page
     """
     if reservation.user == user:
         return redirect("reservations:user-reservations")

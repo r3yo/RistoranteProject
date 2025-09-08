@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.contrib import messages
 from django.urls import *
 from django.shortcuts import *
 from django.views.generic.list import ListView
@@ -7,6 +8,18 @@ from django.views.generic.detail import DetailView
 from braces.views import GroupRequiredMixin
 from .models import *
 from .forms import *
+
+class GroupRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, "You need to log in to access this page.")
+            return redirect("login")
+
+        if not request.user.groups.filter(name__in=self.group_required).exists():
+            messages.warning(request, "You don’t have permission to access this page.")
+            return redirect("home")
+
+        return super().dispatch(request, *args, **kwargs)
 
 # Create Ingredient
 class IngredientCreateView(CreateView):
