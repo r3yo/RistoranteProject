@@ -77,10 +77,11 @@ document.addEventListener("DOMContentLoaded", function () {
         applyGlobalStagger();
     }
 
-    [nameInput, ingredientInput, minPriceInput, maxPriceInput, sortSelect, availabilitySelect].forEach(input => {
+    [nameInput, ingredientInput, minPriceInput, maxPriceInput, availabilitySelect].forEach(input => {
         input.addEventListener("input", () => containers.forEach(updateContainer));
-        input.addEventListener("change", () => containers.forEach(updateContainer));
     });
+
+    sortSelect.addEventListener("change", () => containers.forEach(updateContainer));
 
     // Initial update
     containers.forEach(updateContainer);
