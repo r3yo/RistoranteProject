@@ -1,13 +1,13 @@
-# Project Name
+# Restaurant
 
-A short description of your Django project.
+A Django web application for managing restaurant operations, featuring real-time notifications, user-friendly forms, and image support.
 
 ## Features
 - Django framework  
-- Real-time support with Channels & Daphne  
+- Real-time support with Channels  
 - Beautiful forms with Crispy Forms & Bootstrap 4  
 - Handy mixins with Django Braces  
-- Image support with Pillow (optional)
+- Image support with Pillow
 
 ## Setup
 
@@ -62,5 +62,5 @@ python manage.py runserver
 
 ## Notes
 - Pillow is required for `ImageField`.  
-- Channels & Daphne enable real-time features.  
+- Channels enables real-time features.  
 - Django Braces provides useful class-based view mixins.
