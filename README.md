@@ -5,8 +5,8 @@ A Django web application for managing restaurant operations, featuring real-time
 ## Features
 - Django framework  
 - Real-time support with Channels  
-- Beautiful forms with Crispy Forms & Bootstrap 4  
-- Handy mixins with Django Braces  
+- Forms with Crispy Forms & Bootstrap 4  
+- Mixins with Django Braces  
 - Image support with Pillow
 
 ## Setup
