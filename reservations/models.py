@@ -34,6 +34,7 @@ class WaitlistEntry(models.Model):
     class Meta:
         verbose_name_plural = "Waitlist Entries"
         ordering = ['created_at']
+        unique_together = ('user', 'date', 'start_hour', 'end_hour')
     
     def __str__(self):
         return f"{self.user} in waiting list for {self.start_hour}-{self.end_hour} on {self.date} for {self.guests} guests."

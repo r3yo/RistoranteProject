@@ -317,6 +317,13 @@ table tbody tr:nth-child(odd) {
     background-color: #5b5b5b;
 }
 
+.list-group-item {
+    background-color: #282828;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
 /* ==========================
    Availability list
 ========================== */
