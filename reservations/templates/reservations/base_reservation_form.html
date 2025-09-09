@@ -15,7 +15,7 @@
                     <button type="submit" class="btn {% block submit_class %}btn-primary{% endblock %} btn-block mt-3">
                         {% block submit_text %}{% endblock %}
                     </button>
-                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary btn-block mt-2">Cancel</a>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-block mt-2">Cancel</a>
                 </form>
             </div>
         </div>

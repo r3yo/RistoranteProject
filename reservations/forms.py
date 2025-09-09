@@ -45,9 +45,6 @@ class ReservationForm(forms.ModelForm):
     def _get_time_range(self, cleaned_data):
         selected_hours = sorted(int(h) for h in cleaned_data.get("time", []))
 
-        if not selected_hours:
-            raise forms.ValidationError("Please select at least one hour.")
-
         return time(hour = selected_hours[0]), time(hour = selected_hours[-1] + 1)
 
     def _get_valid_table(self, user, guests, date, start, end):

@@ -125,7 +125,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
         else:
             # No table and user didn't join waitlist
             messages.warning(self.request, "No table available and you did not join the waitlist.")
-            return self.form_invalid(form)
+            return redirect("home")
         
         return super().form_valid(form)
         
@@ -264,12 +264,10 @@ def update_reservation(request, pk):
             else:
                 # No table and user didn't join waitlist
                 messages.error(request, "No table available and you did not join the waitlist.")
+                return redirect("home")
 
             return redirect_after_reservation(reservation, request.user)
-
-        else:
-            return redirect_after_reservation(reservation, request.user)
-
+        
     else:
         time_slot = list(range(reservation.start_hour.hour, reservation.end_hour.hour)) 
         form = ReservationForm(instance = reservation, user = request.user, initial = {'time' : time_slot})
