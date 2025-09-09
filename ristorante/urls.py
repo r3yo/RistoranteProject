@@ -23,7 +23,6 @@ from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login-or-register/', login_or_register, name = 'login_or_register'),
     path("register/", UserCreateView.as_view(), name = "register"),
     path("register_manager/", ManagerCreateView.as_view(), name = "register-manager"),
     path("login/", auth_views.LoginView.as_view(), name = "login"),

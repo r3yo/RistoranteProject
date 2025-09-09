@@ -74,7 +74,6 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
     form_class = ReservationForm
     template_name = 'reservations/make_reservation.html'
-    login_url = '/login-or-register/'
 
     def get_form_class(self):
         if self.request.user.groups.filter(name = "Managers").exists():
