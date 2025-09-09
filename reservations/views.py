@@ -240,7 +240,7 @@ def update_reservation(request, pk):
             old_date = reservation.date
 
             if form.cleaned_data.get("table"):
-                # Table is available --> notify waitlist first
+                # Table is available --> notify waitlist
                 
                 form.save()
 
