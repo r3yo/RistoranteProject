@@ -16,12 +16,6 @@ def home(request):
             request.session['sent_reservation_reminders'] = True
     return render(request, template_name = "extended.html")
 
-def login_or_register(request):
-    if request.user.is_authenticated:
-        logout(request)  # force anonymous for this page
-
-    return render(request, 'login_or_register.html')
-
 class UserCreateView(CreateView):
     form_class = CreateClientForm
     template_name = "create_user.html"
