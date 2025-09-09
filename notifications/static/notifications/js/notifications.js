@@ -5,8 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const notifList = document.getElementById("notif-list");
     const unreadCountElem = document.getElementById("unread-count");
-    const dropdown = document.getElementById("notif-dropdown");
-    const toggleBtn = document.getElementById("notif-toggle");
     const markAllBtn = document.getElementById("mark-all-read");
 
     // --- WebSocket for real-time notifications ---
@@ -34,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         data.forEach(n => {
             const li = document.createElement("li");
-            li.textContent = n.message;
+            li.textContent = n.message + " (" + n.type + ")";
             notifList.appendChild(li);
         });
 
