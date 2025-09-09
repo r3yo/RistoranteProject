@@ -61,6 +61,4 @@ python manage.py runserver
 ```
 
 ## Notes
-- Pillow is required for `ImageField`.  
-- Channels enables real-time features.  
-- Django Braces provides useful class-based view mixins.
+- Pillow is required for `ImageField`.
