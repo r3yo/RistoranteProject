@@ -103,7 +103,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
             send_notification(
                 user = user,
                 message = f"Reservation created successfully for {form.cleaned_data["guests"]} on {form.cleaned_data["date"]} at {dict(Table.HOURS_CHOICES).get(int(form.cleaned_data["time"][0]))}.",
-                notif_type = 'CONFIRM'
+                notif_type = 'CONFIRMATION'
             )
         
         elif join_waitlist:
