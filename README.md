@@ -1,4 +1,4 @@
-# Django Restaurant Project
+# Restaurant
 
 A Django web application for managing restaurant operations, featuring real-time notifications, user-friendly forms, and image support.
 
