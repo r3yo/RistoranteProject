@@ -20,9 +20,7 @@ def login_or_register(request):
     if request.user.is_authenticated:
         logout(request)  # force anonymous for this page
 
-    return render(request, 'login_or_register.html', {
-        'next': request.GET.get('next', '/'),
-    })
+    return render(request, 'login_or_register.html')
 
 class UserCreateView(CreateView):
     form_class = CreateClientForm
