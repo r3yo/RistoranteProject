@@ -5,7 +5,7 @@ from tables.models import generate_unique_slug
 
 # Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
     
     class Meta:
@@ -21,7 +21,7 @@ class Category(models.Model):
         return self.name
     
 class Ingredient(models.Model):
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length = 100, unique=True)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
     
     class Meta:
@@ -40,7 +40,7 @@ class Ingredient(models.Model):
 class Dish(models.Model):
     category = models.ForeignKey(Category, related_name="dishes", on_delete=models.CASCADE)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
     ingredients = models.ManyToManyField(Ingredient, related_name = "dishes")
     description = models.CharField(max_length=500, default="No description.")
     price = models.DecimalField(max_digits=6, decimal_places=2)
