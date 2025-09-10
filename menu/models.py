@@ -1,7 +1,7 @@
 import os
 import re
 from django.db import models
-from django.utils.text import slugify
+from tables.models import generate_unique_slug
 
 # Create your models here.
 class Category(models.Model):
@@ -14,14 +14,14 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Category, "CAT")
         super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
     
 class Ingredient(models.Model):
-    name = models.CharField(max_length = 100, unique = True)
+    name = models.CharField(max_length = 100, unique=True)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
     
     class Meta:
@@ -31,7 +31,7 @@ class Ingredient(models.Model):
         # Normalize casing and collapse spacing
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Ingredient, "ING")
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -56,7 +56,7 @@ class Dish(models.Model):
     def save(self, *args, **kwargs):
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Dish, "DSH")
         try:
             old_instance = Dish.objects.get(pk=self.pk)
             if old_instance.img and old_instance.img != self.img:
