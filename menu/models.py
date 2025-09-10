@@ -1,11 +1,11 @@
 import os
 import re
 from django.db import models
-from django.utils.text import slugify
+from tables.models import generate_unique_slug
 
 # Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
     
     class Meta:
@@ -14,14 +14,14 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Category, "CAT")
         super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
     
 class Ingredient(models.Model):
-    name = models.CharField(max_length = 100, unique = True)
+    name = models.CharField(max_length = 100)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
     
     class Meta:
@@ -31,7 +31,7 @@ class Ingredient(models.Model):
         # Normalize casing and collapse spacing
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Ingredient, "ING")
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -40,7 +40,7 @@ class Ingredient(models.Model):
 class Dish(models.Model):
     category = models.ForeignKey(Category, related_name="dishes", on_delete=models.CASCADE)
     slug = models.SlugField(primary_key = True, unique = True, blank = True)
-    name = models.CharField(max_length=150, unique=True)
+    name = models.CharField(max_length=150)
     ingredients = models.ManyToManyField(Ingredient, related_name = "dishes")
     description = models.CharField(max_length=500, default="No description.")
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -56,7 +56,7 @@ class Dish(models.Model):
     def save(self, *args, **kwargs):
         self.name = re.sub(r"\s+", " ", self.name).strip().title()
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(Dish, "DSH")
         try:
             old_instance = Dish.objects.get(pk=self.pk)
             if old_instance.img and old_instance.img != self.img:
