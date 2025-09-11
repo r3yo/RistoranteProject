@@ -5,7 +5,12 @@ name = "pypi"
 
 [packages]
 django = "*"
+daphne = "*"
+channels = "*"
+django-crispy-forms = "*"
+crispy-bootstrap4 = "*"
 django-braces = "*"
+pillow = "*"
 
 [dev-packages]
 
