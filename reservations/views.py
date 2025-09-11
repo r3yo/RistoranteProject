@@ -7,6 +7,7 @@ from django.urls import *
 from datetime import *
 from django.contrib.auth.mixins import *
 from django.contrib.auth.decorators import *
+from notifications.models import Notification
 from notifications.utils import send_notification
 from reservations.utils import get_conflicting_reservations
 from tables.models import Table
@@ -32,15 +33,14 @@ def add_to_waitlist(user, date, start_hour, end_hour, guests):
     except IntegrityError:
         return False
 
-def notify_waitlist(table, date, start_hour, end_hour):
+def notify_waitlist(table, date):
     """
     Notify all users on the waitlist if a table becomes available
     for the specified date, time, and number of guests.
     """
     waitlist_entries = WaitlistEntry.objects.filter(
         date = date,
-        start_hour__gte = start_hour,
-        end_hour__lte = end_hour,
+        start_hour__gt = timezone.localtime(),
         guests = table.seats
     )
 
@@ -61,14 +61,23 @@ def notify_waitlist(table, date, start_hour, end_hour):
 
 def send_reminders(user):
     """
-    Send out reminders to the logged in user
+    Send out reminders to the logged in user, avoids duplicate reminders if not read
     """
     for r in Reservation.objects.filter(user = user, date = timezone.localdate(), start_hour__gte = timezone.localtime()):
-        send_notification(
+        message = f"Today you have a reservation for {r.guests} from {r.start_hour} to {r.end_hour}."
+
+        if not Notification.objects.filter(
             user = user,
-            message = f"Today you have a reservation for {r.guests} from {r.start_hour} to {r.end_hour}.",
-            notif_type = 'REMINDER'
-        )
+            message = message,
+            type = 'REMINDER',
+            read = False,
+            created_at__date = timezone.localdate()
+        ).exists():
+            send_notification(
+                user = user,
+                message = message,
+                notif_type = 'REMINDER'
+            )
 
 class ReservationCreateView(LoginRequiredMixin, CreateView):
     model = Reservation
@@ -215,7 +224,7 @@ def cancel_reservation(request, pk):
     if request.method == "POST":
         # Delete the reservation and redirect
         reservation.delete()
-        notify_waitlist(reservation.table, reservation.date, reservation.start_hour, reservation.end_hour)
+        notify_waitlist(reservation.table, reservation.date)
         return redirect_after_reservation(reservation, request.user)
 
     return render(request, "reservations/cancel_reservation.html", {"reservation" : reservation})
@@ -243,7 +252,7 @@ def update_reservation(request, pk):
                 
                 form.save()
 
-                notify_waitlist(old_table, old_date, old_start, old_end)
+                notify_waitlist(old_table, old_date)
                 messages.success(request, "Reservation updated successfully.")
 
             elif form.cleaned_data.get("join_waitlist"):

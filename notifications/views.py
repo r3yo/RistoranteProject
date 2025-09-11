@@ -16,5 +16,5 @@ def notifications_json(request):
 
 @login_required
 def mark_all_read(request):
-    Notification.objects.filter(user = request.user, read = False).update(read = True)
+    Notification.objects.filter(user = request.user, read = False).order_by('-created_at')[:10].update(read = True)
     return JsonResponse({'status': 'ok'})
